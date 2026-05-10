@@ -32,7 +32,7 @@ export default function SignUpPage() {
           {mounted && (
             <img 
               className={styles.videoBg}
-              src="/sign-up image.jpg"
+              src="/sign-up-image.jpg"
               alt="Initiation"
               style={{
                 opacity: mounted ? 1 : 0,

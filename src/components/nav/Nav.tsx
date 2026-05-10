@@ -258,7 +258,7 @@ export default function Nav() {
                 <div className={styles.menuVideoWrapper}>
                   <img 
                     className={styles.menuVideo} 
-                    src="/sign-up image.jpg"
+                    src="/sign-up-image.jpg"
                     alt="Spartan"
                     style={{ backgroundColor: '#111' }}
                   />

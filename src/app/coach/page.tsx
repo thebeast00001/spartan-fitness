@@ -219,7 +219,7 @@ export default function CoachPage() {
         >
           {mediaInView && (
             <img 
-              src="/sign-up image.jpg" 
+              src="/sign-up-image.jpg" 
               className={styles.media}
               alt="Coach"
               style={{ backgroundColor: '#111' }}
