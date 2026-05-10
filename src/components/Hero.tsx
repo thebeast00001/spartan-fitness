@@ -16,6 +16,12 @@ const Hero = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const scrollHintRef = useRef<HTMLDivElement>(null);
   const [isSoundOn, setIsSoundOn] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Toggle sound on user click (browser requires gesture to unmute)
   const toggleSound = () => {
@@ -192,17 +198,20 @@ const Hero = () => {
 
           {/* Video layer */}
           <div className={styles.videoSection} ref={videoSectionRef}>
-            <video
-              ref={videoRef}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="auto"
-              className={styles.heroVideo}
-            >
-              <source src="/hero_video.mp4" type="video/mp4" />
-            </video>
+            {mounted && (
+              <video
+                ref={videoRef}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+                className={styles.heroVideo}
+                style={{ backgroundColor: '#111' }}
+              >
+                <source src="/hero_video.mp4" type="video/mp4" />
+              </video>
+            )}
           </div>
 
           {/* Sound toggle button */}
