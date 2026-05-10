@@ -263,6 +263,7 @@ export default function Nav() {
                     loop 
                     playsInline 
                     src="/vid_001.mp4"
+                    style={{ backgroundColor: '#111' }}
                   />
                 </div>
                 <div className={styles.menuVideoWrapper}>
@@ -273,6 +274,7 @@ export default function Nav() {
                     loop 
                     playsInline 
                     src="/vid_002.mp4"
+                    style={{ backgroundColor: '#111' }}
                   />
                 </div>
               </>

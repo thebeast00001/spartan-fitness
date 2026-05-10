@@ -15,6 +15,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function CoachPage() {
   const [mounted, setMounted] = useState(false);
+  const [mediaInView, setMediaInView] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -57,6 +58,12 @@ export default function CoachPage() {
           }
         }
       );
+    });
+
+    ScrollTrigger.create({
+      trigger: `.${styles.mediaGrid}`,
+      start: "top 150%", // Load shortly before scrolling into view
+      onEnter: () => setMediaInView(true),
     });
 
     return () => {
@@ -193,7 +200,7 @@ export default function CoachPage() {
           className={styles.mediaBlockLarge} 
           ref={(el) => { if(el) mediaRefs.current[0] = el; }}
         >
-          {mounted && (
+          {mediaInView && (
             <video 
               src="/vid_002.mp4" 
               autoPlay 
@@ -210,7 +217,7 @@ export default function CoachPage() {
           className={styles.mediaBlockSmall} 
           ref={(el) => { if(el) mediaRefs.current[1] = el; }}
         >
-          {mounted && (
+          {mediaInView && (
             <video 
               src="/vid_001.mp4" 
               autoPlay 
