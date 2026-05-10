@@ -7,6 +7,7 @@ import CustomCursor from "@/components/CustomCursor";
 import SmoothScroll from "@/components/SmoothScroll";
 import Image from "next/image";
 import { Anton } from "next/font/google";
+import { useUser } from "@clerk/nextjs";
 
 const anton = Anton({ weight: "400", subsets: ["latin"] });
 
@@ -45,12 +46,33 @@ export default function SchedulePage() {
   const [selectedDay, setSelectedDay] = useState<any | null>(null);
   
   const [formData, setFormData] = useState({ title: "", subtitle: "", imageUrl: "" });
+  const { user } = useUser();
 
+  // Load from local storage when user changes or component mounts
   useEffect(() => {
     const cal = generateMonthDays();
     setCalendar(cal);
-    setSessions([]);
-  }, []);
+    
+    if (user) {
+      const saved = localStorage.getItem(`spartan_workouts_${user.id}`);
+      if (saved) {
+        setSessions(JSON.parse(saved));
+      } else {
+        setSessions([]);
+      }
+    } else {
+      setSessions([]);
+    }
+  }, [user]);
+
+  // Save to local storage whenever sessions change
+  useEffect(() => {
+    if (user && sessions.length > 0) {
+      localStorage.setItem(`spartan_workouts_${user.id}`, JSON.stringify(sessions));
+    } else if (user && sessions.length === 0) {
+      localStorage.removeItem(`spartan_workouts_${user.id}`);
+    }
+  }, [sessions, user]);
 
   const handleCellClick = (day: any) => {
     setSelectedDay(day);
@@ -222,7 +244,7 @@ export default function SchedulePage() {
                       <input 
                         type="text" 
                         className={styles.input}
-                        placeholder="e.g. Grand Opening" 
+                        placeholder="e.g. Back & Biceps" 
                         value={formData.title}
                         onChange={(e) => setFormData({...formData, title: e.target.value})}
                       />
@@ -233,7 +255,7 @@ export default function SchedulePage() {
                       <input 
                         type="text" 
                         className={styles.input}
-                        placeholder="e.g. Imprints" 
+                        placeholder="e.g. 4x10 Deadlifts, 3x12 Rows" 
                         value={formData.subtitle}
                         onChange={(e) => setFormData({...formData, subtitle: e.target.value})}
                       />
