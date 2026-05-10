@@ -178,7 +178,7 @@ export default function Nav() {
         <Link href="/" className={styles.navLogo} style={{ textDecoration: 'none' }}>
           SPARTAN FITNESS
         </Link>
-        <div style={{ paddingLeft: '15px', borderLeft: '1px solid rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', height: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', height: '24px' }}>
           {isSignedIn ? (
             <UserButton showName appearance={{ elements: { userButtonOuterIdentifier: { color: "white", marginLeft: "10px", fontSize: "14px", fontFamily: "var(--font-space)" }, userButtonBox: { height: '24px' }, userButtonAvatarBox: { width: '24px', height: '24px' } } }} />
           ) : (
