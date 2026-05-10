@@ -73,6 +73,14 @@ const ScrambleText = ({ text }: { text: string }) => {
 export default function Nav() {
   const [isOpen, setIsOpen] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [isPreloaded, setIsPreloaded] = useState(false);
+
+  useEffect(() => {
+    // Silently preload the menu media 2 seconds after the page loads
+    // This guarantees the page loads instantly, but the menu is completely ready when clicked
+    const timer = setTimeout(() => setIsPreloaded(true), 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const checkTouch = () => {
@@ -253,7 +261,7 @@ export default function Nav() {
           </div>
 
           <div className={styles.mediaContainer}>
-            {isOpen && (
+            {(isOpen || isPreloaded) && (
               <>
                 <div className={styles.menuVideoWrapper}>
                   <img 
@@ -266,10 +274,11 @@ export default function Nav() {
                 <div className={styles.menuVideoWrapper}>
                   <video 
                     className={styles.menuVideo} 
-                    autoPlay 
+                    autoPlay={isOpen} 
                     muted 
                     loop 
                     playsInline 
+                    preload="auto"
                     src="/vid_002.mp4"
                     style={{ backgroundColor: '#111' }}
                   />
