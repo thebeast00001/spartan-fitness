@@ -256,13 +256,10 @@ export default function Nav() {
             {isOpen && (
               <>
                 <div className={styles.menuVideoWrapper}>
-                  <video 
+                  <img 
                     className={styles.menuVideo} 
-                    autoPlay 
-                    muted 
-                    loop 
-                    playsInline 
-                    src="/vid_001.mp4"
+                    src="/sign-up image.jpg"
+                    alt="Spartan"
                     style={{ backgroundColor: '#111' }}
                   />
                 </div>

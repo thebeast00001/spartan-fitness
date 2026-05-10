@@ -218,13 +218,10 @@ export default function CoachPage() {
           ref={(el) => { if(el) mediaRefs.current[1] = el; }}
         >
           {mediaInView && (
-            <video 
-              src="/vid_001.mp4" 
-              autoPlay 
-              muted 
-              loop 
-              playsInline
+            <img 
+              src="/sign-up image.jpg" 
               className={styles.media}
+              alt="Coach"
               style={{ backgroundColor: '#111' }}
             />
           )}

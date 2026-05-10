@@ -12,8 +12,7 @@ const spaceGrotesk = Space_Grotesk({ subsets: ["latin"] });
 export default function SignUpPage() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 1000);
-    return () => clearTimeout(timer);
+    setMounted(true);
   }, []);
   return (
     <div className={`${styles.authContainer} ${inter.className}`}>
@@ -31,13 +30,10 @@ export default function SignUpPage() {
         {/* LEFT COLUMN - VISUALS */}
         <div className={styles.leftColumn}>
           {mounted && (
-            <video 
-              autoPlay 
-              loop 
-              muted 
-              playsInline 
+            <img 
               className={styles.videoBg}
-              src="/vid_001.mp4"
+              src="/sign-up image.jpg"
+              alt="Initiation"
               style={{
                 opacity: mounted ? 1 : 0,
                 transition: "opacity 1s ease-in"
