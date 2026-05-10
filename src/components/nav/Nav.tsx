@@ -248,7 +248,7 @@ export default function Nav() {
                     muted 
                     loop 
                     playsInline 
-                    src="/about_001.mp4"
+                    src="/vid_002.mp4"
                   />
                 </div>
                 <div className={styles.menuVideoWrapper}>

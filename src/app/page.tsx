@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
-import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Gallery from "@/components/Gallery";
 import Manifesto from "@/components/Manifesto";
