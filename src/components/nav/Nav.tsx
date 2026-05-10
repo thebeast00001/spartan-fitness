@@ -253,7 +253,7 @@ export default function Nav() {
           </div>
 
           <div className={styles.mediaContainer}>
-            {isOpen && !isTouchDevice && (
+            {isOpen && (
               <>
                 <div className={styles.menuVideoWrapper}>
                   <video 

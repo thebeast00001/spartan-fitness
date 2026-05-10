@@ -166,6 +166,7 @@ export default function CoachPage() {
             fill 
             className={styles.mainHeroImage}
             priority
+            unoptimized
           />
         </div>
       </section>
@@ -200,6 +201,7 @@ export default function CoachPage() {
               loop 
               playsInline
               className={styles.media}
+              style={{ backgroundColor: '#111' }}
             />
           )}
         </div>
@@ -216,6 +218,7 @@ export default function CoachPage() {
               loop 
               playsInline
               className={styles.media}
+              style={{ backgroundColor: '#111' }}
             />
           )}
         </div>
