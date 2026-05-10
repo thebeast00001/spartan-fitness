@@ -29,11 +29,10 @@ const Loader = ({ onFinished }: { onFinished: () => void }) => {
           document.querySelector(`.${styles.progressWrapper}`)?.classList.add(styles.fadeOut);
 
           await textControls.start({
-            scale: 60, // Reduced from 200 to fix GPU rendering lag
-            opacity: 0, // Fade out as it scales to hide pixelation
-            filter: "blur(10px)", // Add faux motion blur
+            scale: 30, // Optimized for mobile GPUs
+            opacity: 0, 
             transition: { 
-              duration: 0.9, 
+              duration: 0.8, 
               ease: [0.76, 0, 0.24, 1] 
             }
           });
@@ -75,7 +74,7 @@ const Loader = ({ onFinished }: { onFinished: () => void }) => {
         className={styles.zoomWrapper}
         animate={textControls}
         initial={{ scale: 1, opacity: 1, x: 0, y: 0 }}
-        style={{ transformOrigin: "48% 52%" }}
+        style={{ transformOrigin: "48% 52%", willChange: "transform, opacity" }}
       >
         <div className={styles.titleRow}>
           {"SPARTAN".split("").map((char, i) => (

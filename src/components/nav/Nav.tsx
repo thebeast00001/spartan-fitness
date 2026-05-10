@@ -72,6 +72,20 @@ const ScrambleText = ({ text }: { text: string }) => {
 
 export default function Nav() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    const checkTouch = () => {
+      setIsTouchDevice(
+        window.matchMedia("(pointer: coarse)").matches || 
+        "ontouchstart" in window || 
+        navigator.maxTouchPoints > 0
+      );
+    };
+    checkTouch();
+    window.addEventListener("resize", checkTouch);
+    return () => window.removeEventListener("resize", checkTouch);
+  }, []);
   const { isSignedIn } = useAuth();
   const pathname = usePathname();
 
@@ -239,7 +253,7 @@ export default function Nav() {
           </div>
 
           <div className={styles.mediaContainer}>
-            {isOpen && (
+            {isOpen && !isTouchDevice && (
               <>
                 <div className={styles.menuVideoWrapper}>
                   <video 
