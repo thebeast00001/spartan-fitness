@@ -21,12 +21,19 @@ export default function Footer() {
   const innerRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [inView, setInView] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
     if (!footerRef.current || !innerRef.current) return;
 
     const ctx = gsap.context(() => {
+      // Lazy load video when footer is approaching
+      ScrollTrigger.create({
+        trigger: footerRef.current,
+        start: "top 150%", // Trigger long before it's visible so it has time to buffer
+        onEnter: () => setInView(true),
+      });
       // Classic Awwwards footer reveal: the inner content slides down from top
       gsap.fromTo(innerRef.current,
         { yPercent: -30 }, 
@@ -59,7 +66,7 @@ export default function Footer() {
       <div ref={innerRef} style={{ width: '100%', height: '100%', position: 'relative' }}>
         
         {/* Video Background */}
-        {mounted && (
+        {inView && (
           <video 
             ref={videoRef}
             className={styles.footerVideo} 
