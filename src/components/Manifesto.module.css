@@ -1,0 +1,150 @@
+.manifestoSection {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background-color: #000; /* Force black background */
+  color: var(--text-primary);
+  overflow: hidden;
+  margin-bottom: -1px; /* Prevent pixel bleeding */
+}
+
+.stackContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.stackItem {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-primary);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  padding: 0 5%;
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: 3fr 1fr 4fr;
+  width: 100%;
+  height: 100%;
+  align-items: start;
+}
+
+.leftCol {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  align-self: flex-start;
+  padding-top: 30px; /* Adjusted to center nicely */
+}
+
+.idNumber {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #a0a0a0;
+  line-height: 1;
+  margin-top: 5px;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1;
+  margin: 0;
+  transition: transform 0.5s ease-out;
+}
+
+
+
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  align-self: center;
+}
+
+.textContent {
+  max-width: 600px;
+}
+
+.description {
+  font-size: 2rem;
+  line-height: 1.3;
+  color: var(--text-primary);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.learnMore {
+  color: #a0a0a0;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: color 0.3s ease;
+}
+
+.learnMore:hover {
+  color: var(--text-primary);
+}
+
+.arrow {
+  font-size: 1.5rem;
+}
+
+.mediaContainer {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mediaHeader {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.imageWrapper {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  position: relative;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.imageWrapper:hover .image {
+  transform: scale(1.05);
+}
+
+@media (max-width: 1024px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    gap: 30px;
+    align-items: start;
+    padding-top: 100px;
+  }
+  
+  .leftCol {
+    padding-top: 0;
+  }
+  
+  .description {
+    font-size: 1.5rem;
+  }
+}

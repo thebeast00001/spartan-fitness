@@ -1,0 +1,234 @@
+.metricsSection {
+  background-color: var(--bg-primary);
+  color: #050505;
+  position: relative;
+  display: flex;
+  min-height: 100vh;
+  overflow: hidden;
+  z-index: 10;
+  box-shadow: 0 -30px 80px rgba(0,0,0,0.9);
+}
+
+.contentWrapper {
+  display: flex;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+/* ---------------- LEFT COLUMN (THE DASHBOARD) ---------------- */
+.titleCol {
+  width: 45vw;
+  background: #f7f7f7; /* Very subtle grey to define the block */
+  border-right: 1px solid rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  padding: 3rem;
+}
+
+.technicalHeader {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #cc0000;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+}
+
+.massiveVerticalText {
+  position: absolute;
+  left: -15vw;
+  top: 50%;
+  transform: translateY(-50%) rotate(-90deg);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 35vw;
+  line-height: 0.8;
+  color: rgba(0,0,0,0.03);
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 0;
+}
+
+.mainTitleBlock {
+  margin-top: auto;
+  margin-bottom: auto;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.titleSolid, .titleOutline {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: clamp(4rem, 8vw, 11rem);
+  line-height: 0.85;
+  text-transform: uppercase;
+  margin: 0;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.titleOutline {
+  color: transparent;
+  -webkit-text-stroke: 1px #050505;
+  margin-left: 2rem; /* Offset for aesthetic */
+}
+
+/* The Animated Radar Centerpiece */
+.radarContainer {
+  position: absolute;
+  top: 50%;
+  right: -15vw; /* Deliberately bleeds into the right column */
+  transform: translateY(-50%);
+  width: 45vw;
+  height: 45vw;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.radarRing1, .radarRing2, .radarRing3 {
+  position: absolute;
+  border-radius: 50%;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.radarRing1 {
+  width: 100%; height: 100%;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.radarRing2 {
+  width: 60%; height: 60%;
+  border: 1px dashed rgba(204,0,0,0.3);
+}
+
+.radarRing3 {
+  width: 25%; height: 25%;
+  background: rgba(204,0,0,0.03);
+  border: 1px solid rgba(204,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radarRing3::after {
+  content: '';
+  width: 10px; height: 10px;
+  background: #cc0000;
+  border-radius: 50%;
+}
+
+.radarLine {
+  position: absolute;
+  width: 50%; height: 1px;
+  background: linear-gradient(to right, rgba(204,0,0,0), rgba(204,0,0,0.8));
+  top: 50%; left: 50%;
+  transform-origin: left center;
+}
+
+/* ---------------- RIGHT COLUMN (THE METRICS) ---------------- */
+.cardsCol {
+  width: 55vw;
+  display: flex;
+  flex-direction: column;
+  padding-top: 15vh;
+  padding-bottom: 25vh;
+}
+
+.card {
+  padding: 8vh 5rem;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+  z-index: 2;
+  transition: background 0.3s ease;
+  will-change: transform, opacity;
+}
+
+.card:hover {
+  background: #fcfcfc;
+}
+
+.cardId {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #cc0000;
+}
+
+.cardNumberWrapper {
+  display: flex;
+  align-items: flex-start;
+  overflow: hidden;
+}
+
+.cardNumber {
+  font-family: 'Bebas Neue', 'Inter', sans-serif;
+  font-size: clamp(6rem, 12vw, 15rem);
+  line-height: 0.8;
+  margin: 0;
+  letter-spacing: -0.02em;
+  font-weight: 900;
+}
+
+.cardSuffix {
+  font-family: 'Bebas Neue', 'Inter', sans-serif;
+  font-size: clamp(3rem, 6vw, 8rem);
+  color: #cc0000;
+  line-height: 0.8;
+  font-weight: 900;
+}
+
+.cardLabel {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(1.2rem, 2vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-top: 1rem;
+}
+
+.cardDesc {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: rgba(0,0,0,0.6);
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+@media (max-width: 1024px) {
+  .metricsSection {
+    flex-direction: column;
+  }
+  .contentWrapper {
+    flex-direction: column;
+  }
+  .titleCol {
+    width: 100%;
+    min-height: 50vh;
+    border-right: none;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+  }
+  .cardsCol {
+    width: 100%;
+    padding: 0;
+  }
+  .radarContainer {
+    right: 50%;
+    transform: translate(50%, -50%);
+  }
+  .card {
+    padding: 4rem 2rem;
+  }
+}

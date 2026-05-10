@@ -1,0 +1,252 @@
+.navWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0; /* Nav wrapper takes no space so it doesn't block clicks */
+  z-index: 1000;
+}
+
+/* The Floating Black Pill */
+.pillContainer {
+  position: fixed;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #000;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  gap: 15px;
+  z-index: 10000; /* Above the overlay */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.pillBtn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 5px 15px 5px 10px;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.iconBtn, .percentBtn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  transition: opacity 0.3s ease;
+}
+
+.iconBtn:hover, .percentBtn:hover {
+  opacity: 0.7;
+}
+
+.percentBtn {
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-left: 1px solid rgba(255,255,255,0.2);
+  padding-left: 15px;
+}
+
+.navLogo {
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  font-size: 0.85rem;
+  padding: 0 10px 0 5px;
+  border-left: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Full Screen Overlay Background */
+.menuOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000000; /* True black background */
+  z-index: 9999; /* Way above page */
+  clip-path: circle(0px at 50% 40px); /* Initially hidden at pill location (centered) */
+  pointer-events: none; /* Let clicks pass when closed */
+  overflow: hidden;
+}
+
+/* Allow clicks when open */
+.navWrapper.open .menuOverlay {
+  pointer-events: auto;
+}
+
+/* Menu Content Layout */
+.menuContent {
+  width: 100%;
+  height: 100%;
+  padding: 120px 10% 50px 10%;
+  display: flex;
+  gap: 60px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.linksContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  height: 100%;
+  justify-content: center;
+  flex: 1;
+}
+
+.mediaContainer {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+  height: 60%;
+  align-items: center;
+  justify-content: flex-end;
+  opacity: 0.8;
+}
+
+.menuVideoWrapper {
+  width: 250px;
+  height: 350px;
+  border-radius: 200px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255,255,255,0.1);
+  transform: translateY(50px);
+  opacity: 0;
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  mask-image: radial-gradient(white, black);
+}
+
+.menuVideo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.navWrapper.open .menuVideoWrapper {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Delay the second video slightly */
+.navWrapper.open .menuVideoWrapper:nth-child(2) {
+  transition-delay: 0.15s;
+  margin-top: 100px; /* Offset the second video for Awwwards masonry style */
+}
+
+.menuVideoWrapper:hover {
+  filter: brightness(1.2);
+  transform: scale(1.05) !important;
+}
+
+.sectionLabel {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #999;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.linkWrapper {
+  overflow: hidden; /* For stagger reveal */
+  margin-bottom: 15px;
+  width: max-content;
+  max-width: 100%;
+}
+
+.mainLink {
+  display: block;
+  font-size: 3.5rem;
+  font-weight: 500;
+  color: #ffffff;
+  text-decoration: none;
+  letter-spacing: -0.03em;
+  transition: opacity 0.3s ease, color 0.3s ease;
+  position: relative;
+}
+
+.scrambleText {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+/* Invisible placeholder to force container to stay the exact same width 
+   as the original text, preventing layout thrashing and lag */
+.scrambleText::before {
+  content: attr(data-text);
+  visibility: hidden;
+  display: block;
+  height: 0;
+}
+
+.mainLink:hover .scrambleText {
+  color: #ccff00; /* Acid yellow on hover */
+}
+
+.subLinks {
+  margin-top: auto;
+}
+
+.subLink {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #ffffff;
+  text-decoration: none;
+  transition: opacity 0.3s ease, color 0.3s ease;
+}
+
+.subLink:hover {
+  opacity: 1;
+  color: #ccff00;
+}
+
+.socialWrapper {
+  margin-top: 40px;
+}
+
+@media (max-width: 900px) {
+  .menuContent {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 100px 5% 50px 5%;
+  }
+  .mediaContainer {
+    display: none; /* Hide videos on mobile menu for clean typography */
+  }
+  .mainLink {
+    font-size: 2.5rem;
+  }
+  .linksContainer {
+    gap: 30px;
+  }
+}

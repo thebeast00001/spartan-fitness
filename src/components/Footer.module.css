@@ -1,0 +1,274 @@
+.footer {
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: #000;
+}
+
+.footerVideo {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  object-fit: cover;
+  z-index: 0;
+  filter: grayscale(100%) contrast(1.2);
+}
+
+.volumeToggle {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  z-index: 99;
+  pointer-events: auto;
+  background: #000;
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.volumeToggle:hover {
+  transform: scale(1.1);
+  background: #e31b23;
+}
+
+.floatingCard {
+  position: relative;
+  z-index: 1;
+  width: 90vw;
+  max-width: 1400px;
+  background-color: #FFFFFF; /* Pure white as requested */
+  border-radius: 0; /* Sharp edges */
+  margin: 20vh auto 0 auto;
+  padding: 60px;
+  color: #000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 70vh;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.cardTop {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.cardNewsletter {
+  max-width: 500px;
+}
+
+.newsletterHeading {
+  font-family: serif;
+  font-size: 2.5rem;
+  line-height: 1.1;
+  font-weight: 400;
+  margin-bottom: 40px;
+}
+
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.contactBlock h4 {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #a0a0a0;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.contactBlock a {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #000;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+  letter-spacing: -0.02em;
+}
+
+.contactBlock a:hover {
+  opacity: 0.5;
+}
+
+.cardMenuContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding-left: 100px;
+}
+
+.cardMenu h3, .cardSupport h3 {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.cardMenu ul, .cardSupport ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cardMenu a, .cardSupport a {
+  text-decoration: none;
+  color: #000;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: opacity 0.3s;
+}
+
+.cardMenu a:hover, .cardSupport a:hover {
+  opacity: 0.5;
+}
+
+.mapLink {
+  text-decoration: none;
+  color: #000;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: opacity 0.3s;
+  display: inline-block;
+  border-bottom: 1px solid #000;
+  padding-bottom: 2px;
+}
+
+.mapLink:hover {
+  opacity: 0.5;
+}
+
+.cardBottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 60px;
+}
+
+.paymentLogos {
+  display: flex;
+  gap: 20px;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.socialIcons {
+  display: flex;
+  gap: 15px;
+}
+
+.socialIcons a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 0; /* Sharp edges */
+  background-color: #000;
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.7rem;
+  font-weight: 700;
+  transition: transform 0.3s;
+}
+
+.socialIcons a:hover {
+  transform: scale(1.1);
+}
+
+.footerCredits {
+  position: absolute;
+  bottom: 20px;
+  left: 5vw;
+  right: 5vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  color: #fff;
+  z-index: 1;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.credits {
+  text-align: right;
+  line-height: 1.5;
+}
+
+.credits a {
+  color: #fff;
+  text-decoration: underline;
+  transition: opacity 0.3s;
+}
+
+.credits a:hover {
+  opacity: 0.7;
+}
+
+@media (max-width: 1024px) {
+  .footer {
+    height: auto;
+    padding-bottom: 80px;
+  }
+  .floatingCard {
+    margin: 10vh auto;
+    width: 90vw;
+    padding: 30px;
+    min-height: auto;
+  }
+  .newsletterHeading {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+  }
+  .cardTop {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .cardMenuContainer {
+    padding-left: 0;
+  }
+  .cardBottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 30px;
+    margin-top: 40px;
+  }
+  .footerCredits {
+    position: absolute;
+    bottom: 20px;
+    left: 5vw;
+    right: 5vw;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .credits {
+    text-align: left;
+  }
+}

@@ -1,0 +1,209 @@
+/* ─── Hero ──────────────────────────────────────────────────── */
+.hero {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  background: var(--background);
+}
+
+.pinnedContainer {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  background: var(--background);
+}
+
+/* ─── Subliminal Easter Egg ─────────────────────────────────── */
+.subliminalMessage {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 0; 
+  background: var(--bg-primary); /* Forces white background as requested */
+}
+
+.subliminalText {
+  font-family: 'Georgia', 'Playfair Display', serif;
+  font-size: 8vw;
+  color: #111111;
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+/* ─── Video ─────────────────────────────────────────────────── */
+.videoSection {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  overflow: hidden;
+  clip-path: inset(35% 37% 35% 37%);
+  will-change: clip-path;
+}
+
+.heroVideo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.6);
+  will-change: transform;
+}
+
+/* ─── Video frame border that appears during unfold ──────────── */
+.videoFrame {
+  position: absolute;
+  inset: 0;
+  z-index: 11;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  clip-path: inset(35% 37% 35% 37%);
+  will-change: clip-path;
+}
+
+/* ─── Headline ──────────────────────────────────────────────── */
+.titleContainer {
+  position: relative;
+  z-index: 5;
+  pointer-events: none;
+  text-align: center;
+}
+
+.line {
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.char {
+  display: inline-block;
+  font-family: var(--font-space);
+  font-size: clamp(3rem, 14vw, 14rem);
+  font-weight: 700;
+  line-height: 0.85;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  color: var(--foreground);
+  will-change: transform, opacity;
+}
+
+/* ─── Scroll hint ────────────────────────────────────────────── */
+.scrollHint {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  opacity: 0;
+}
+
+.scrollHintText {
+  font-family: var(--font-space);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.35em;
+  color: var(--muted);
+}
+
+.scrollLine {
+  width: 1px;
+  height: 40px;
+  background: var(--muted);
+  transform-origin: top;
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+  0%   { scaleY: 0; opacity: 0; }
+  40%  { scaleY: 1; opacity: 1; }
+  100% { scaleY: 0; opacity: 0; }
+}
+
+/* ─── Corner markers (editorial detail) ──────────────────────── */
+.cornerMark {
+  position: absolute;
+  z-index: 12;
+  width: 12px;
+  height: 12px;
+  opacity: 0;
+  will-change: opacity;
+}
+
+.cornerMark::before,
+.cornerMark::after {
+  content: '';
+  position: absolute;
+  background: rgba(255,255,255,0.3);
+}
+
+.topLeft     { top: 5%; left: 3%; }
+.topRight    { top: 5%; right: 3%; }
+.bottomLeft  { bottom: 12%; left: 3%; }
+.bottomRight { bottom: 12%; right: 3%; }
+
+.topLeft::before,
+.bottomLeft::before { width: 12px; height: 1px; top: 0; left: 0; }
+.topLeft::after,
+.topRight::after     { width: 1px; height: 12px; top: 0; }
+.topLeft::after      { left: 0; }
+.topRight::before    { width: 12px; height: 1px; top: 0; right: 0; }
+.topRight::after     { right: 0; }
+.bottomLeft::after   { width: 1px; height: 12px; bottom: 0; left: 0; }
+.bottomRight::before { width: 12px; height: 1px; bottom: 0; right: 0; }
+.bottomRight::after  { width: 1px; height: 12px; bottom: 0; right: 0; }
+
+/* ─── Sound toggle ───────────────────────────────────────────── */
+.soundToggle {
+  position: absolute;
+  bottom: 2.5rem;
+  right: 2rem;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1.2rem;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  cursor: pointer;
+  color: var(--foreground);
+  transition: all 0.3s ease;
+}
+
+.soundToggle:hover {
+  background: rgba(0, 0, 0, 0.06);
+  border-color: rgba(0, 0, 0, 0.3);
+}
+
+.soundIcon {
+  display: flex;
+  align-items: center;
+}
+
+.soundLabel {
+  font-family: var(--font-space);
+  font-size: 0.55rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+@media (max-width: 768px) {
+  .cornerMark { display: none; }
+  .scrollHint { bottom: 1.5rem; }
+  .soundToggle { bottom: 1.5rem; right: 1rem; }
+}

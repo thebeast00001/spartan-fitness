@@ -1,0 +1,90 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  mix-blend-mode: difference;
+}
+
+.logo {
+  font-family: var(--font-space);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: white;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+}
+
+.navLinks {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.navLink {
+  font-family: var(--font-space);
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  position: relative;
+  overflow: hidden;
+  height: 1.2rem;
+}
+
+.linkText {
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.linkHover {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  display: block;
+  color: var(--primary);
+  transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.navLink:hover .linkText {
+  transform: translateY(-100%);
+}
+
+.navLink:hover .linkHover {
+  transform: translateY(-100%);
+}
+
+.trialBtn {
+  background: var(--primary);
+  color: #fff !important;
+  padding: 0.4rem 1rem !important;
+  margin-top: 0.5rem;
+  height: auto !important;
+  border-radius: 0;
+  text-decoration: none !important;
+}
+
+.trialBtn .linkText, .trialBtn .linkHover {
+  font-weight: 800;
+  font-size: 0.65rem;
+  color: #fff !important;
+}
+
+.trialBtn:hover {
+  transform: translateY(-2px);
+  background: #000;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .navLinks {
+    display: none;
+  }
+}

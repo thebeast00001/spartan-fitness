@@ -1,0 +1,153 @@
+.section {
+  background-color: #000;
+  color: #fff;
+  width: 100vw;
+  padding: 35vh 0 8vw;
+  overflow: hidden;
+  position: relative;
+}
+
+.container {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.header {
+  padding: 0 5vw;
+  margin-bottom: 6vw;
+}
+
+.title {
+  font-family: 'Mangogrotesque', Arial, sans-serif;
+  font-size: 5vw;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.marqueeContainer {
+  width: 100vw;
+  overflow: hidden;
+  position: relative;
+  padding: 3vw 0;
+}
+
+/* Fade edges for seamless infinite feel */
+.marqueeContainer::before,
+.marqueeContainer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 10vw;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.marqueeContainer::before {
+  left: 0;
+  background: linear-gradient(to right, #000, transparent);
+}
+
+.marqueeContainer::after {
+  right: 0;
+  background: linear-gradient(to left, #000, transparent);
+}
+
+.marqueeTrack {
+  display: flex;
+  width: fit-content;
+  gap: 3vw;
+  padding-left: 5vw;
+}
+
+.card {
+  width: 28vw;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 3rem;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.03);
+  transition: border-color 0.4s ease, background 0.4s ease;
+}
+
+.card:hover {
+  border-color: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.05);
+}
+
+.quote {
+  font-size: 1.25rem;
+  line-height: 1.5;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: rgba(255,255,255,0.85);
+  margin: 0;
+}
+
+.author {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: auto;
+}
+
+.avatarPlaceholder {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: #ccff00;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.authorInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.authorName {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.authorRole {
+  margin: 0;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.4);
+}
+
+@media (max-width: 1024px) {
+  .title {
+    font-size: 7vw;
+  }
+  .card {
+    width: 40vw;
+  }
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 10vw;
+  }
+  .card {
+    width: 80vw;
+    min-width: unset;
+  }
+}

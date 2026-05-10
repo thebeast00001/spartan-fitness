@@ -1,0 +1,141 @@
+.section {
+  background-color: #000;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center; /* Center the slider perfectly */
+}
+
+.sliderContainer {
+  height: 85vh; /* Exact proportion from the image */
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.slider {
+  display: flex;
+  gap: 2vw; /* Close gaps like the image */
+  padding: 0 5vw;
+  height: 100%;
+  align-items: center;
+}
+
+.card {
+  width: 40vw; /* Wide magazine style cards */
+  min-width: 450px;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background-color: #e5e5dd; /* The off-white background seen in the middle poster */
+}
+
+.imageWrapper {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.image {
+  object-fit: cover;
+  /* Add subtle filter so white text is always readable, matching reference */
+  filter: brightness(0.9) contrast(1.1);
+}
+
+.overlayText {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 3vw;
+  color: #fff; /* White text matching the reference */
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.leftCol {
+  flex: 1;
+}
+
+.rightCol {
+  flex: 1;
+  text-align: right;
+  /* Reference text is highly technical and small */
+}
+
+.smallText {
+  font-size: 0.75rem;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  margin: 0;
+  line-height: 1.2;
+  opacity: 0.9;
+  letter-spacing: 0.02em;
+}
+
+.middleRow {
+  position: absolute;
+  top: 35%; /* Exact vertical placement from reference */
+  left: 3vw;
+  right: 3vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transform: translateY(-50%);
+}
+
+.mainTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.02em;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.subTitle {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin: 0;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  letter-spacing: -0.01em;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.dateNumber {
+  font-size: 1.5rem;
+  font-weight: 400;
+  margin: 0;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+@media (max-width: 1024px) {
+  .card {
+    width: 60vw;
+    min-width: 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  .card {
+    width: 85vw;
+    min-width: unset;
+  }
+  .subTitle {
+    display: none; /* Hide subtitle on very small screens to avoid overlap */
+  }
+}
