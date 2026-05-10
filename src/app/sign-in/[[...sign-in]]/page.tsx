@@ -11,7 +11,10 @@ const spaceGrotesk = Space_Grotesk({ subsets: ["latin"] });
 
 export default function SignInPage() {
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 1000);
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <div className={`${styles.authContainer} ${inter.className}`}>
       
@@ -35,6 +38,10 @@ export default function SignInPage() {
               playsInline 
               className={styles.videoBg}
               src="/vid_002.mp4"
+              style={{
+                opacity: mounted ? 1 : 0,
+                transition: "opacity 1s ease-in"
+              }}
             />
           )}
           <div className="grainOverlay" />

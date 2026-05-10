@@ -194,7 +194,7 @@ export default function CoachPage() {
         >
           {mounted && (
             <video 
-              src="/hero_video.mp4" 
+              src="/vid_002.mp4" 
               autoPlay 
               muted 
               loop 
@@ -210,7 +210,7 @@ export default function CoachPage() {
         >
           {mounted && (
             <video 
-              src="/vid_002.mp4" 
+              src="/vid_001.mp4" 
               autoPlay 
               muted 
               loop 
