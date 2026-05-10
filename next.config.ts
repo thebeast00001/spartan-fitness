@@ -12,6 +12,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    optimizePackageImports: ['@clerk/nextjs', 'framer-motion', 'gsap', 'lucide-react'],
+  },
   // @ts-ignore - Turbopack workspace configuration
   turbopack: {
     root: __dirname,
