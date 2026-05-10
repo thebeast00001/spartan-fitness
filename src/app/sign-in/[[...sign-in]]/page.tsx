@@ -30,7 +30,7 @@ export default function SignInPage() {
             muted 
             playsInline 
             className={styles.videoBg}
-            src="/vid_001.mp4"
+            src="/about_001.mp4"
           />
           <div className="grainOverlay" />
           

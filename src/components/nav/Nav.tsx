@@ -239,26 +239,30 @@ export default function Nav() {
           </div>
 
           <div className={styles.mediaContainer}>
-            <div className={styles.menuVideoWrapper}>
-              <video 
-                className={styles.menuVideo} 
-                autoPlay 
-                muted 
-                loop 
-                playsInline 
-                src="/vid_001.mp4"
-              />
-            </div>
-            <div className={styles.menuVideoWrapper}>
-              <video 
-                className={styles.menuVideo} 
-                autoPlay 
-                muted 
-                loop 
-                playsInline 
-                src="/vid_002.mp4"
-              />
-            </div>
+            {isOpen && (
+              <>
+                <div className={styles.menuVideoWrapper}>
+                  <video 
+                    className={styles.menuVideo} 
+                    autoPlay 
+                    muted 
+                    loop 
+                    playsInline 
+                    src="/about_001.mp4"
+                  />
+                </div>
+                <div className={styles.menuVideoWrapper}>
+                  <video 
+                    className={styles.menuVideo} 
+                    autoPlay 
+                    muted 
+                    loop 
+                    playsInline 
+                    src="/hero_video.mp4"
+                  />
+                </div>
+              </>
+            )}
           </div>
 
         </div>

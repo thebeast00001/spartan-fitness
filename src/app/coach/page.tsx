@@ -194,7 +194,7 @@ export default function CoachPage() {
           ref={(el) => { if(el) mediaRefs.current[0] = el; }}
         >
           <video 
-            src="/vid_002.mp4" 
+            src="/hero_video.mp4" 
             autoPlay 
             muted 
             loop 
@@ -208,7 +208,7 @@ export default function CoachPage() {
           ref={(el) => { if(el) mediaRefs.current[1] = el; }}
         >
           <video 
-            src="/vid_001.mp4" 
+            src="/about_001.mp4" 
             autoPlay 
             muted 
             loop 

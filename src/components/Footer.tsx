@@ -64,7 +64,7 @@ export default function Footer() {
           playsInline
           preload="none"
         >
-          <source src="/vid_002.mp4" type="video/mp4" />
+          <source src="/about_001.mp4" type="video/mp4" />
         </video>
 
         {/* Volume Toggle */}
