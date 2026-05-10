@@ -12,6 +12,11 @@ const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] }
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Footer() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const footerRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -54,18 +59,19 @@ export default function Footer() {
       <div ref={innerRef} style={{ width: '100%', height: '100%', position: 'relative' }}>
         
         {/* Video Background */}
-        <video 
-          key="vid_002"
-          ref={videoRef}
-          className={styles.footerVideo} 
-          autoPlay 
-          loop 
-          muted={isMuted} 
-          playsInline
-          preload="none"
-        >
-          <source src="/about_001.mp4" type="video/mp4" />
-        </video>
+        {mounted && (
+          <video 
+            ref={videoRef}
+            className={styles.footerVideo} 
+            autoPlay 
+            loop 
+            muted={isMuted} 
+            playsInline
+            preload="none"
+          >
+            <source src="/about_001.mp4" type="video/mp4" />
+          </video>
+        )}
 
         {/* Volume Toggle */}
         <button 

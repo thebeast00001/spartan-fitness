@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
@@ -14,6 +14,11 @@ const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] }
 gsap.registerPlugin(ScrollTrigger);
 
 export default function CoachPage() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const containerRef = useRef<HTMLDivElement>(null);
   const heroNameRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -125,13 +130,7 @@ export default function CoachPage() {
           <p className={styles.mutedText}>Founder, Coach</p>
         </div>
         
-        <div className={styles.headerCenter}>
-          <div className={styles.pillNav}>
-            <span className={styles.pillItemActive}>Philosophy</span>
-            <span className={styles.pillItem}>Results</span>
-            <span className={styles.pillItem}>Contact</span>
-          </div>
-        </div>
+        <div className={styles.headerCenter}></div>
 
         <div className={styles.headerRight}>
           <p className={styles.mutedText}>Social</p>
@@ -193,28 +192,32 @@ export default function CoachPage() {
           className={styles.mediaBlockLarge} 
           ref={(el) => { if(el) mediaRefs.current[0] = el; }}
         >
-          <video 
-            src="/hero_video.mp4" 
-            autoPlay 
-            muted 
-            loop 
-            playsInline
-            className={styles.media}
-          />
+          {mounted && (
+            <video 
+              src="/hero_video.mp4" 
+              autoPlay 
+              muted 
+              loop 
+              playsInline
+              className={styles.media}
+            />
+          )}
         </div>
 
         <div 
           className={styles.mediaBlockSmall} 
           ref={(el) => { if(el) mediaRefs.current[1] = el; }}
         >
-          <video 
-            src="/about_001.mp4" 
-            autoPlay 
-            muted 
-            loop 
-            playsInline
-            className={styles.media}
-          />
+          {mounted && (
+            <video 
+              src="/about_001.mp4" 
+              autoPlay 
+              muted 
+              loop 
+              playsInline
+              className={styles.media}
+            />
+          )}
         </div>
       </section>
 

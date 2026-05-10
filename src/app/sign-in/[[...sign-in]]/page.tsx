@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 
 import { SignIn } from "@clerk/nextjs";
 import { Inter, Space_Grotesk } from "next/font/google";
@@ -9,6 +10,8 @@ const inter = Inter({ subsets: ["latin"] });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"] });
 
 export default function SignInPage() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   return (
     <div className={`${styles.authContainer} ${inter.className}`}>
       
@@ -24,14 +27,16 @@ export default function SignInPage() {
         
         {/* LEFT COLUMN - VISUALS */}
         <div className={styles.leftColumn}>
-          <video 
-            autoPlay 
-            loop 
-            muted 
-            playsInline 
-            className={styles.videoBg}
-            src="/about_001.mp4"
-          />
+          {mounted && (
+            <video 
+              autoPlay 
+              loop 
+              muted 
+              playsInline 
+              className={styles.videoBg}
+              src="/about_001.mp4"
+            />
+          )}
           <div className="grainOverlay" />
           
           <div className={styles.leftContent}>
