@@ -9,6 +9,20 @@ const inter = Inter({ weight: "700", subsets: ["latin"] });
 export default function CustomCursor() {
   const [isHovering, setIsHovering] = useState(false);
   const [hoverText, setHoverText] = useState("");
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    const checkTouch = () => {
+      setIsTouchDevice(
+        window.matchMedia("(pointer: coarse)").matches || 
+        "ontouchstart" in window || 
+        navigator.maxTouchPoints > 0
+      );
+    };
+    checkTouch();
+    window.addEventListener("resize", checkTouch);
+    return () => window.removeEventListener("resize", checkTouch);
+  }, []);
 
   // Use motion values for raw mouse coordinates to enable velocity calculations
   const mouseX = useMotionValue(-100);
@@ -71,6 +85,8 @@ export default function CustomCursor() {
       window.removeEventListener("mouseover", handleMouseOver);
     };
   }, [mouseX, mouseY, scale]);
+
+  if (isTouchDevice) return null;
 
   return (
     <>
