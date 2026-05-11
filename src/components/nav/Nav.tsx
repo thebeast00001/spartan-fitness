@@ -282,8 +282,8 @@ export default function Nav() {
                     muted 
                     loop 
                     playsInline 
-                    preload="auto"
-                    src="/vid_002.mp4"
+                    preload="none"
+                    src="/vid_002_opt.mp4"
                     style={{ backgroundColor: '#111' }}
                   />
                 </div>

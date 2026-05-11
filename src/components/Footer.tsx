@@ -77,7 +77,7 @@ export default function Footer() {
             playsInline
             preload="none"
           >
-            <source src="/vid_002.mp4" type="video/mp4" />
+            <source src="/vid_002_opt.mp4" type="video/mp4" />
           </video>
         )}
 
