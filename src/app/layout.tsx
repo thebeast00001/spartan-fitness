@@ -14,8 +14,96 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "SPARTAN | Elite Physical Culture",
-  description: "Redefining strength and discipline. Personal coaching by IFBB Pro Sanjeev Rajput.",
+  metadataBase: new URL('https://spartanfitness.com'),
+  title: {
+    default: "SPARTAN FITNESS | Elite Physical Culture & IFBB Pro Coaching",
+    template: "%s | SPARTAN FITNESS"
+  },
+  description: "Redefining strength and discipline. Elite personal coaching, bodybuilding, and physical culture by IFBB Pro Sanjeev Rajput. Join the Spartan cult.",
+  keywords: ["Fitness", "IFBB Pro", "Sanjeev Rajput", "Bodybuilding", "Elite Coaching", "Personal Trainer", "Gym", "Strength Training"],
+  authors: [{ name: "Sanjeev Rajput" }],
+  creator: "Spartan Fitness",
+  publisher: "Spartan Fitness",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    title: "SPARTAN FITNESS | Elite Physical Culture",
+    description: "Redefining strength and discipline. Elite personal coaching by IFBB Pro Sanjeev Rajput.",
+    url: 'https://spartanfitness.com',
+    siteName: 'Spartan Fitness',
+    images: [
+      {
+        url: '/hero_poster.jpg',
+        width: 1920,
+        height: 1080,
+        alt: 'Spartan Fitness Hero Image',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'SPARTAN FITNESS | Elite Physical Culture',
+    description: 'Redefining strength and discipline. Elite personal coaching by IFBB Pro Sanjeev Rajput.',
+    creator: '@spartanfitness',
+    images: ['/hero_poster.jpg'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+};
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'HealthAndBeautyBusiness',
+  name: 'Spartan Fitness',
+  image: 'https://spartanfitness.com/hero_poster.jpg',
+  '@id': 'https://spartanfitness.com',
+  url: 'https://spartanfitness.com',
+  telephone: '+919876543210',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Shop No. 755, Lashwara, Majnu Wala Rd, near Electric Transformer',
+    addressLocality: 'Deoband',
+    addressRegion: 'Uttar Pradesh',
+    postalCode: '247554',
+    addressCountry: 'IN'
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 29.6974,
+    longitude: 77.6834
+  },
+  openingHoursSpecification: {
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday'
+    ],
+    opens: '05:00',
+    closes: '22:00'
+  },
+  sameAs: [
+    'https://instagram.com/spartanfitness',
+    'https://youtube.com/spartanfitness',
+    'https://facebook.com/spartanfitness'
+  ]
 };
 
 export default function RootLayout({
@@ -160,6 +248,10 @@ export default function RootLayout({
     >
       <html lang="en">
         <body className={`${inter.variable} ${spaceGrotesk.variable}`} suppressHydrationWarning>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          />
           <Nav />
           <div className="grainOverlay" />
           <CustomCursor />
