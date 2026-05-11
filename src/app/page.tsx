@@ -1,10 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 import Hero from "@/components/Hero";
-import Loader from "@/components/Loader";
 import SmoothScroll from "@/components/SmoothScroll";
 import CustomCursor from "@/components/CustomCursor";
 
@@ -16,35 +13,25 @@ const Testimonials = dynamic(() => import("@/components/Testimonials"), { ssr: f
 const Footer = dynamic(() => import("@/components/Footer"), { ssr: false });
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(true);
-
   return (
-    <>
-      <AnimatePresence mode="wait">
-        {isLoading && (
-          <Loader key="loader" onFinished={() => setIsLoading(false)} />
-        )}
-      </AnimatePresence>
-
-      <SmoothScroll>
-        <main style={{ opacity: isLoading ? 0 : 1, transition: "opacity 1s ease" }}>
-          <Hero />
-          
-          <StaggeredTransition prevColor="#000" nextColor="#050505" direction="left-to-right" />
-          <Gallery />
-          
-          <StaggeredTransition prevColor="#050505" nextColor="#000" direction="right-to-left" />
-          <Manifesto />
-          
-          <Pricing />
-          
-          <StaggeredTransition prevColor="#fff" nextColor="#000" direction="right-to-left" />
-          <Testimonials />
-          
-          <StaggeredTransition prevColor="#000" nextColor="#fff" direction="left-to-right" />
-          <Footer />
-        </main>
-      </SmoothScroll>
-    </>
+    <SmoothScroll>
+      <main>
+        <Hero />
+        
+        <StaggeredTransition prevColor="#000" nextColor="#050505" direction="left-to-right" />
+        <Gallery />
+        
+        <StaggeredTransition prevColor="#050505" nextColor="#000" direction="right-to-left" />
+        <Manifesto />
+        
+        <Pricing />
+        
+        <StaggeredTransition prevColor="#fff" nextColor="#000" direction="right-to-left" />
+        <Testimonials />
+        
+        <StaggeredTransition prevColor="#000" nextColor="#fff" direction="left-to-right" />
+        <Footer />
+      </main>
+    </SmoothScroll>
   );
 }
