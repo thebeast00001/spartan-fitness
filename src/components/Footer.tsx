@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./Footer.module.css";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -147,7 +148,7 @@ export default function Footer() {
                 OPEN MAPS ↗
               </a>
               <div style={{ marginTop: '20px', overflow: 'hidden', borderRadius: '4px' }}>
-                <img src="/location.png" alt="Spartan HQ Map" style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }} />
+                <Image src="/location.png" alt="Spartan HQ Map" width={600} height={300} style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }} />
               </div>
             </div>
           </div>

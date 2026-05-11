@@ -27,7 +27,7 @@ const SUB_LINKS = [
 const CHARS = "ABCDEFGHJKLNOPQRSTUVXYZ023456789";
 
 const ScrambleText = ({ text }: { text: string }) => {
-  const [displayText, setDisplayText] = useState(text);
+  const spanRef = useRef<HTMLSpanElement>(null);
   const intervalRef = useRef<any>(null);
 
   const handleMouseEnter = () => {
@@ -35,37 +35,41 @@ const ScrambleText = ({ text }: { text: string }) => {
     clearInterval(intervalRef.current);
 
     intervalRef.current = setInterval(() => {
-      setDisplayText(text.split("").map((letter, index) => {
-        if (index < iteration) {
-          return text[index];
-        }
-        // Preserve spaces perfectly
+      const currentText = text.split("").map((letter, index) => {
+        if (index < iteration) return text[index];
         if (letter === " ") return " ";
         return CHARS[Math.floor(Math.random() * CHARS.length)];
-      }).join(""));
+      }).join("");
+      
+      if (spanRef.current) {
+        spanRef.current.textContent = currentText;
+      }
 
       if (iteration >= text.length) {
         clearInterval(intervalRef.current);
-        setDisplayText(text); // Ensure final exact match
+        if (spanRef.current) spanRef.current.textContent = text;
       }
 
-      iteration += 1; // Faster step to prevent lag loop on long text
+      iteration += 1;
     }, 20);
   };
 
   const handleMouseLeave = () => {
     clearInterval(intervalRef.current);
-    setDisplayText(text);
+    if (spanRef.current) {
+      spanRef.current.textContent = text;
+    }
   };
 
   return (
     <span 
+      ref={spanRef}
       onMouseEnter={handleMouseEnter} 
       onMouseLeave={handleMouseLeave}
       className={styles.scrambleText}
       data-text={text}
     >
-      {displayText}
+      {text}
     </span>
   );
 };

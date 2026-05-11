@@ -206,6 +206,7 @@ const Hero = () => {
                 loop
                 playsInline
                 preload="auto"
+                poster="/hero_poster.jpg"
                 className={styles.heroVideo}
                 style={{ backgroundColor: '#111' }}
               >

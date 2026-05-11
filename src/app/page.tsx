@@ -2,16 +2,18 @@
 
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
+import dynamic from "next/dynamic";
 import Hero from "@/components/Hero";
-import Gallery from "@/components/Gallery";
-import Manifesto from "@/components/Manifesto";
-import StaggeredTransition from "@/components/StaggeredTransition";
-import Pricing from "@/components/Pricing";
-import Testimonials from "@/components/Testimonials";
-import Footer from "@/components/Footer";
+import Loader from "@/components/Loader";
 import SmoothScroll from "@/components/SmoothScroll";
 import CustomCursor from "@/components/CustomCursor";
-import Loader from "@/components/Loader";
+
+const Gallery = dynamic(() => import("@/components/Gallery"), { ssr: false });
+const Manifesto = dynamic(() => import("@/components/Manifesto"), { ssr: false });
+const StaggeredTransition = dynamic(() => import("@/components/StaggeredTransition"), { ssr: false });
+const Pricing = dynamic(() => import("@/components/Pricing"), { ssr: false });
+const Testimonials = dynamic(() => import("@/components/Testimonials"), { ssr: false });
+const Footer = dynamic(() => import("@/components/Footer"), { ssr: false });
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
