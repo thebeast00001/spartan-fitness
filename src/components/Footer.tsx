@@ -132,7 +132,7 @@ export default function Footer() {
                   <li><Link href="/">HOME</Link></li>
                   <li><Link href="/trial">FREE TRIAL</Link></li>
                   <li><Link href="/coach">COACH</Link></li>
-                  <li><Link href="/workout">CREATE YOUR WORKOUT</Link></li>
+                  <li><Link href="/schedule">CREATE YOUR WORKOUT</Link></li>
                 </ul>
               </div>
 
