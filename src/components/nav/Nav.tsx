@@ -78,6 +78,17 @@ export default function Nav() {
   const [isOpen, setIsOpen] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [isPreloaded, setIsPreloaded] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      if (isOpen) {
+        videoRef.current.play().catch(e => console.log("Video play error:", e));
+      } else {
+        videoRef.current.pause();
+      }
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     // Silently preload the menu media 2 seconds after the page loads
@@ -277,8 +288,8 @@ export default function Nav() {
                 </div>
                 <div className={styles.menuVideoWrapper}>
                   <video 
+                    ref={videoRef}
                     className={styles.menuVideo} 
-                    autoPlay={isOpen} 
                     muted 
                     loop 
                     playsInline 

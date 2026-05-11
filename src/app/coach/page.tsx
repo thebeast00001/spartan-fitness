@@ -25,6 +25,13 @@ export default function CoachPage() {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subRef = useRef<HTMLDivElement>(null);
   const mediaRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (mediaInView && videoRef.current) {
+      videoRef.current.play().catch(e => console.log("Video play error:", e));
+    }
+  }, [mediaInView]);
 
   useEffect(() => {
     // Elegant, buttery smooth intro animations
@@ -202,8 +209,8 @@ export default function CoachPage() {
         >
           {mediaInView && (
             <video 
-              src="/vid_002.mp4" 
-              autoPlay 
+              ref={videoRef}
+              src="/vid_002_opt.mp4" 
               muted 
               loop 
               playsInline
