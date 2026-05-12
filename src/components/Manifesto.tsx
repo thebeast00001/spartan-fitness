@@ -1,14 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import styles from "./Manifesto.module.css";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Inter } from "next/font/google";
-
-const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600"] });
-
-gsap.registerPlugin(ScrollTrigger);
 
 const manifestoData = [
   {
@@ -36,51 +30,65 @@ const Manifesto = () => {
   const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // The container will be pinned.
-      // Each item (after the first) will animate up, covering the previous one.
-      const items = itemsRef.current;
-      if (items.length < 2) return;
+    if (typeof window === "undefined") return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    if (reduceMotion || isMobile) return;
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: `+=${window.innerHeight * (items.length)}`, // Scroll duration proportional to items
-          pin: true,
-          scrub: 1,
-        }
-      });
+    let cancelled = false;
+    let cleanup: (() => void) | undefined;
 
-      const headerHeight = 80; // Height to leave visible
+    (async () => {
+      const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ]);
+      if (cancelled) return;
+      gsap.registerPlugin(ScrollTrigger);
 
-      items.forEach((item, index) => {
-        if (index === 0) {
-            // First item starts at top, does not move in initially
+      const ctx = gsap.context(() => {
+        const items = itemsRef.current;
+        if (items.length < 2) return;
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top top",
+            end: `+=${window.innerHeight * (items.length)}`,
+            pin: true,
+            scrub: 1,
+          }
+        });
+
+        const headerHeight = 80;
+
+        items.forEach((item, index) => {
+          if (index === 0) {
             gsap.set(item, { zIndex: index, y: 0 });
-        } else {
-            // Start lower down
+          } else {
             gsap.set(item, { zIndex: index, y: "120%" });
             tl.to(item, {
-                y: index * headerHeight, // Stack below the previous headers
-                duration: 1,
-                ease: "power2.inOut" // Changed from "none" to a smooth curve
+              y: index * headerHeight,
+              duration: 1,
+              ease: "power2.inOut"
             });
-        }
+          }
+        });
       });
-      
-    });
 
-    return () => ctx.revert();
+      cleanup = () => ctx.revert();
+    })();
+
+    return () => { cancelled = true; if (cleanup) cleanup(); };
   }, []);
 
   return (
     <div style={{ position: 'relative', width: '100%' }}>
-      <section className={`${styles.manifestoSection} ${inter.className}`} ref={containerRef} id="manifesto">
+      <section className={styles.manifestoSection} ref={containerRef} id="manifesto">
         <div className={styles.stackContainer}>
           {manifestoData.map((item, index) => (
-            <div 
-              key={item.id} 
+            <div
+              key={item.id}
               className={styles.stackItem}
               ref={(el) => { itemsRef.current[index] = el; }}
             >
@@ -89,7 +97,7 @@ const Manifesto = () => {
                   <span className={styles.idNumber}>{item.id.replace("0", "")}</span>
                   <h2 className={styles.title}>{item.title}</h2>
                 </div>
-                
+
                 <div className={styles.centerCol}></div>
 
                 <div className={styles.rightCol}>
@@ -101,14 +109,23 @@ const Manifesto = () => {
                       </a>
                     </p>
                   </div>
-                  
+
                   <div className={styles.mediaContainer}>
                       <div className={styles.mediaHeader}>
                           <span className={styles.mediaCaption}>Protocol — {item.title}</span>
                           <span className={styles.mediaTag}>{item.title}</span>
                       </div>
                       <div className={styles.imageWrapper}>
-                        <img src={item.src} alt={item.title} className={styles.image} />
+                        <Image
+                          src={item.src}
+                          alt={item.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 40vw"
+                          loading="lazy"
+                          quality={75}
+                          className={styles.image}
+                          style={{ objectFit: "cover" }}
+                        />
                       </div>
                   </div>
                 </div>

@@ -1,3 +1,4 @@
+/* Inline noise SVG as data-URI — eliminates external network request. */
 .grainOverlay {
   position: fixed;
   top: 0;
@@ -7,8 +8,13 @@
   pointer-events: none;
   z-index: 9999;
   opacity: 0.05;
-  background-image: url('https://grainy-gradients.vercel.app/noise.svg');
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
   background-repeat: repeat;
+}
+
+/* Hide grain on mobile to save fill-rate */
+@media (max-width: 768px) {
+  .grainOverlay { display: none; }
 }
 
 :root {
@@ -62,13 +68,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Custom Cursor Extensions */
-body {
-  cursor: none; /* Hide default cursor */
-}
-
-a, button, [role="button"], input, select, textarea {
-  cursor: none; /* Hide pointer on interactable elements */
+/* Custom Cursor Extensions — only hide system cursor on devices that actually
+   have a fine pointer (mouse). Touch devices keep their native pointer so
+   buttons and links remain visually responsive. */
+@media (hover: hover) and (pointer: fine) {
+  body { cursor: none; }
+  a, button, [role="button"], input, select, textarea { cursor: none; }
 }
 
 /* Custom Scrollbar (Invisible but functional) */
@@ -308,4 +313,24 @@ a, button, [role="button"], input, select, textarea {
   text-transform: uppercase !important;
   letter-spacing: 0.1em !important;
   color: #a0a0a0 !important;
+}
+
+/* ========================================= */
+/* PERFORMANCE / MOBILE BASE                 */
+/* ========================================= */
+
+html { -webkit-text-size-adjust: 100%; }
+
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

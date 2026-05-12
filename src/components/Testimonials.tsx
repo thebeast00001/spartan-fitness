@@ -1,11 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useEffect, useRef, useState } from 'react';
 import styles from './Testimonials.module.css';
-
-gsap.registerPlugin(ScrollTrigger);
 
 const REVIEWS = [
   { id: 1, text: "I used to be a soft, formless blob. Now I'm a slightly harder, more expensive blob. Thanks Jeff.", name: "Alex Chen", role: "Software Engineer", initials: "AC" },
@@ -29,90 +25,107 @@ export default function Testimonials() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const [useCssMarquee, setUseCssMarquee] = useState(false);
 
   useEffect(() => {
-    const section = sectionRef.current;
-    const track = trackRef.current;
-    const titleEl = titleRef.current;
-    if (!section || !track || !titleEl) return;
+    if (typeof window === "undefined") return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
-    const ctx = gsap.context(() => {
+    // On mobile or reduced-motion use a pure-CSS marquee — no GSAP, no scrub.
+    if (reduceMotion || isMobile) {
+      setUseCssMarquee(true);
+      return;
+    }
 
-      // 1. Title — scrub-driven parallax. Moves slower than scroll for depth.
-      gsap.fromTo(titleEl,
-        { yPercent: 30, opacity: 0 },
-        { 
-          yPercent: -10, opacity: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: section,
-            start: "top bottom",
-            end: "top 10%",
-            scrub: 1.5,
-          }
-        }
-      );
+    let cancelled = false;
+    let cleanup: (() => void) | undefined;
 
-      // 2. Continuous marquee — base speed
-      const totalWidth = track.scrollWidth;
-      const marquee = gsap.to(track, {
-        x: () => -(totalWidth / 2),
-        ease: "none",
-        duration: 50,
-        repeat: -1,
-        modifiers: {
-          x: gsap.utils.unitize(x => parseFloat(x) % (totalWidth / 2))
-        }
-      });
+    (async () => {
+      const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ]);
+      if (cancelled) return;
+      gsap.registerPlugin(ScrollTrigger);
 
-      // 3. Scroll-velocity boost — marquee accelerates while actively scrolling
-      gsap.to(marquee, {
-        timeScale: 4,
-        ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 0.5,
-        }
-      });
+      const section = sectionRef.current;
+      const track = trackRef.current;
+      const titleEl = titleRef.current;
+      if (!section || !track || !titleEl) return;
 
-      // 4. Distorted Symmetry — Individual card reveal
-      // Cards start in a chaotic, asymmetrical arrangement and scrub into perfect alignment
-      const cards = track.querySelectorAll(`.${styles.card}`);
-      
-      cards.forEach((card, index) => {
-        // Create an alternating asymmetrical pattern based on index
-        const isEven = index % 2 === 0;
-        const rotateDistortion = isEven ? 12 : -15; // Alternating angles
-        const yDistortion = isEven ? 120 : -80; // Alternating heights
-        
-        gsap.fromTo(card,
-          { 
-            opacity: 0, 
-            y: yDistortion,
-            rotationZ: rotateDistortion,
-            scale: 0.8
-          },
+      const ctx = gsap.context(() => {
+        gsap.fromTo(titleEl,
+          { yPercent: 30, opacity: 0 },
           {
-            opacity: 1, 
-            y: 0,
-            rotationZ: 0,
-            scale: 1,
+            yPercent: -10, opacity: 1,
             ease: "none",
             scrollTrigger: {
               trigger: section,
-              start: "top 85%", // Start distortion when section enters
-              end: "top 30%",   // Resolve to perfect symmetry
+              start: "top bottom",
+              end: "top 10%",
               scrub: 1.5,
             }
           }
         );
-      });
 
-    }, section);
+        const totalWidth = track.scrollWidth;
+        const marquee = gsap.to(track, {
+          x: () => -(totalWidth / 2),
+          ease: "none",
+          duration: 50,
+          repeat: -1,
+          modifiers: {
+            x: gsap.utils.unitize((x: string) => parseFloat(x) % (totalWidth / 2))
+          }
+        });
 
-    return () => ctx.revert();
+        gsap.to(marquee, {
+          timeScale: 4,
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 0.5,
+          }
+        });
+
+        const cards = track.querySelectorAll(`.${styles.card}`);
+
+        cards.forEach((card, index) => {
+          const isEven = index % 2 === 0;
+          const rotateDistortion = isEven ? 12 : -15;
+          const yDistortion = isEven ? 120 : -80;
+
+          gsap.fromTo(card,
+            {
+              opacity: 0,
+              y: yDistortion,
+              rotationZ: rotateDistortion,
+              scale: 0.8
+            },
+            {
+              opacity: 1,
+              y: 0,
+              rotationZ: 0,
+              scale: 1,
+              ease: "none",
+              scrollTrigger: {
+                trigger: section,
+                start: "top 85%",
+                end: "top 30%",
+                scrub: 1.5,
+              }
+            }
+          );
+        });
+      }, section);
+
+      cleanup = () => ctx.revert();
+    })();
+
+    return () => { cancelled = true; if (cleanup) cleanup(); };
   }, []);
 
   return (
@@ -125,11 +138,14 @@ export default function Testimonials() {
         </div>
 
         <div className={styles.marqueeContainer}>
-          <div className={styles.marqueeTrack} ref={trackRef}>
+          <div
+            className={`${styles.marqueeTrack} ${useCssMarquee ? styles.cssMarquee : ''}`}
+            ref={trackRef}
+          >
             {[...REVIEWS, ...REVIEWS].map((review, i) => (
               <div key={`${review.id}-${i}`} className={styles.card}>
-                <p className={styles.quote}>"{review.text}"</p>
-                
+                <p className={styles.quote}>&quot;{review.text}&quot;</p>
+
                 <div className={styles.author}>
                   <div className={styles.avatarPlaceholder}>
                     {review.initials}

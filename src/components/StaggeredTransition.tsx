@@ -1,10 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 interface StaggeredTransitionProps {
   prevColor: string;
@@ -12,30 +8,52 @@ interface StaggeredTransitionProps {
   direction?: "left-to-right" | "right-to-left";
 }
 
-export default function StaggeredTransition({ 
-  prevColor, 
-  nextColor, 
-  direction = "left-to-right" 
+export default function StaggeredTransition({
+  prevColor,
+  nextColor,
+  direction = "left-to-right"
 }: StaggeredTransitionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const stripsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Animate the strips shrinking upwards (scaleY to 0) as we scroll past
-      gsap.to(stripsRef.current, {
-        scaleY: 0,
-        ease: "none",
-        stagger: 0, // We don't stagger the animation time, the different initial heights create the stagger effect
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top 80%", // Start animating when the transition area is 80% down the screen
-          end: "top 20%",   // Finish when it reaches 20% down
-          scrub: 1,
-        }
-      });
-    }, containerRef);
-    return () => ctx.revert();
+    if (typeof window === "undefined") return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    if (reduceMotion || isMobile) {
+      // Skip GSAP entirely on mobile — instantly hide strips for a clean section break.
+      stripsRef.current.forEach((el) => { if (el) el.style.transform = "scaleY(0)"; });
+      return;
+    }
+
+    let cancelled = false;
+    let cleanup: (() => void) | undefined;
+
+    (async () => {
+      const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ]);
+      if (cancelled) return;
+      gsap.registerPlugin(ScrollTrigger);
+
+      const ctx = gsap.context(() => {
+        gsap.to(stripsRef.current, {
+          scaleY: 0,
+          ease: "none",
+          stagger: 0,
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 80%",
+            end: "top 20%",
+            scrub: 1,
+          }
+        });
+      }, containerRef);
+      cleanup = () => ctx.revert();
+    })();
+
+    return () => { cancelled = true; if (cleanup) cleanup(); };
   }, []);
 
   // Set the initial heights of the strips to create the distorted/stepped symmetry

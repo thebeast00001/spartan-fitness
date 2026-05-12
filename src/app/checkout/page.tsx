@@ -2,15 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import styles from "./Checkout.module.css";
-import gsap from "gsap";
 import { Bebas_Neue, Permanent_Marker } from "next/font/google";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import emailjs from '@emailjs/browser';
 import { submitMembershipAction } from "@/app/actions";
 
-const bebas = Bebas_Neue({ subsets: ["latin"], weight: "400" });
-const marker = Permanent_Marker({ subsets: ["latin"], weight: "400" });
+const bebas = Bebas_Neue({ subsets: ["latin"], weight: "400", display: "swap" });
+const marker = Permanent_Marker({ subsets: ["latin"], weight: "400", display: "swap" });
 
 export default function CheckoutPage() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -44,18 +42,28 @@ export default function CheckoutPage() {
       }
     }
 
-    // Initial entrance animation
-    const ctx = gsap.context(() => {
-      gsap.from(".anim-item", {
-        y: 40,
-        opacity: 0,
-        duration: 1,
-        stagger: 0.1,
-        ease: "power4.out",
-        delay: 0.2
-      });
-    }, containerRef);
-    return () => ctx.revert();
+    if (typeof window === "undefined") return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) return;
+
+    let cancelled = false;
+    let cleanup: (() => void) | undefined;
+    (async () => {
+      const { default: gsap } = await import("gsap");
+      if (cancelled) return;
+      const ctx = gsap.context(() => {
+        gsap.from(".anim-item", {
+          y: 40,
+          opacity: 0,
+          duration: 1,
+          stagger: 0.1,
+          ease: "power4.out",
+          delay: 0.2
+        });
+      }, containerRef);
+      cleanup = () => ctx.revert();
+    })();
+    return () => { cancelled = true; if (cleanup) cleanup(); };
   }, []);
 
   const handleNext = () => {

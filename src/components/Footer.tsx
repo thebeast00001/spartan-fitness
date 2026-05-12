@@ -4,20 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./Footer.module.css";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Inter } from "next/font/google";
-
-const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
-
-gsap.registerPlugin(ScrollTrigger);
 
 export default function Footer() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
   const footerRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -26,32 +14,62 @@ export default function Footer() {
   const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
-    if (!footerRef.current || !innerRef.current) return;
+    if (!footerRef.current) return;
 
-    const ctx = gsap.context(() => {
-      // Lazy load video when footer is approaching
-      ScrollTrigger.create({
-        trigger: footerRef.current,
-        start: "top 150%", // Trigger long before it's visible so it has time to buffer
-        onEnter: () => setInView(true),
-      });
-      // Classic Awwwards footer reveal: the inner content slides down from top
-      gsap.fromTo(innerRef.current,
-        { yPercent: -30 }, 
-        {
-          yPercent: 0, 
-          ease: "none",
-          scrollTrigger: {
-            trigger: footerRef.current,
-            start: "top bottom", 
-            end: "bottom bottom", 
-            scrub: true,
-          }
+    // Use a native IntersectionObserver to lazy-load the video — way cheaper
+    // than spinning up a ScrollTrigger for a one-shot "in view" flag.
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setInView(true);
+          obs.disconnect();
         }
-      );
-    });
+      },
+      { rootMargin: "200px 0px" }
+    );
+    obs.observe(footerRef.current);
 
-    return () => ctx.revert();
+    // Only set up the parallax reveal if motion is allowed and we're not on mobile.
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+    if (reduceMotion || isMobile) return () => obs.disconnect();
+
+    let cancelled = false;
+    let cleanup: (() => void) | undefined;
+
+    (async () => {
+      const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ]);
+      if (cancelled || !innerRef.current) return;
+      gsap.registerPlugin(ScrollTrigger);
+
+      const ctx = gsap.context(() => {
+        gsap.fromTo(innerRef.current,
+          { yPercent: -30 },
+          {
+            yPercent: 0,
+            ease: "none",
+            scrollTrigger: {
+              trigger: footerRef.current,
+              start: "top bottom",
+              end: "bottom bottom",
+              scrub: true,
+            }
+          }
+        );
+      });
+
+      cleanup = () => ctx.revert();
+    })();
+
+    return () => {
+      cancelled = true;
+      obs.disconnect();
+      if (cleanup) cleanup();
+    };
   }, []);
 
   const toggleMute = () => {
@@ -63,17 +81,15 @@ export default function Footer() {
 
   return (
     <footer ref={footerRef} className={styles.footer}>
-      {/* Inner wrapper for the reveal animation */}
       <div ref={innerRef} style={{ width: '100%', height: '100%', position: 'relative' }}>
-        
-        {/* Video Background */}
+
         {inView && (
-          <video 
+          <video
             ref={videoRef}
-            className={styles.footerVideo} 
-            autoPlay 
-            loop 
-            muted={isMuted} 
+            className={styles.footerVideo}
+            autoPlay
+            loop
+            muted={isMuted}
             playsInline
             preload="none"
           >
@@ -81,9 +97,8 @@ export default function Footer() {
           </video>
         )}
 
-        {/* Volume Toggle */}
-        <button 
-          onClick={toggleMute} 
+        <button
+          onClick={toggleMute}
           className={styles.volumeToggle}
           aria-label={isMuted ? "Unmute video" : "Mute video"}
           suppressHydrationWarning
@@ -102,12 +117,10 @@ export default function Footer() {
           )}
         </button>
 
-        {/* Floating Card */}
         <div ref={cardRef} className={styles.floatingCard}>
-          
-          {/* Top Section */}
+
           <div className={styles.cardTop}>
-            
+
             <div className={styles.cardNewsletter}>
               <h2 className={styles.newsletterHeading}>
                 READY TO FORGE<br/>
@@ -139,7 +152,7 @@ export default function Footer() {
 
             <div className={styles.cardSupport}>
               <h3>HQ</h3>
-              <a 
+              <a
                 href="https://www.google.com/maps/search/?api=1&query=Shop+No.+755,+Lashwara,+Majnu+Wala+Rd,+near+Electric+Transformer,+Teachers+Colony,+Deoband,+Noorpur+Dehat,+Uttar+Pradesh+247554"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -148,18 +161,24 @@ export default function Footer() {
                 OPEN MAPS ↗
               </a>
               <div style={{ marginTop: '20px', overflow: 'hidden', borderRadius: '4px' }}>
-                <Image src="/location.png" alt="Spartan HQ Map" width={600} height={300} style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }} />
+                <Image
+                  src="/location.png"
+                  alt="Spartan HQ Map"
+                  width={600}
+                  height={300}
+                  sizes="(max-width: 768px) 90vw, 600px"
+                  loading="lazy"
+                  quality={75}
+                  style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }}
+                />
               </div>
             </div>
           </div>
 
         </div>
 
-        {/* Bottom Section */}
         <div className={styles.cardBottom}>
-          <div className={styles.paymentLogos}>
-            {/* Payment logos removed */}
-          </div>
+          <div className={styles.paymentLogos}></div>
 
           <div className={styles.socialIcons}>
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" suppressHydrationWarning>IN</a>
@@ -170,7 +189,6 @@ export default function Footer() {
 
       </div>
 
-        {/* Copyright overlaying the video */}
         <div className={styles.footerCredits}>
           <div className={styles.copyright}>
             © 2026 Spartan Fitness Inc.

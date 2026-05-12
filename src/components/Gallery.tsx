@@ -1,11 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import styles from "./Gallery.module.css";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const galleryData = [
   {
@@ -33,40 +30,55 @@ const galleryData = [
 const Gallery = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  
+
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // 50vh is the height of one image container. Total scroll = (length - 1) * 50vh
-      const scrollDistance = (galleryData.length - 1) * window.innerHeight * 0.5;
+    if (typeof window === "undefined") return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    if (reduceMotion || isMobile) return; // mobile uses native scroll instead of pin+scrub
 
-      ScrollTrigger.create({
-        trigger: containerRef.current,
-        start: "top top",
-        // Multiply scroll length to make it a slow, deliberate scroll experience
-        end: `+=${scrollDistance * 3}`, 
-        pin: true,
-        animation: gsap.to(trackRef.current, {
-          y: -scrollDistance,
-          ease: "none"
-        }),
-        scrub: 1,
-        onUpdate: (self) => {
-          // Determine the active image based on scroll progress
-          const index = Math.round(self.progress * (galleryData.length - 1));
-          setActiveIndex(index);
-        }
+    let cancelled = false;
+    let cleanup: (() => void) | undefined;
+
+    (async () => {
+      const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ]);
+      if (cancelled) return;
+      gsap.registerPlugin(ScrollTrigger);
+
+      const ctx = gsap.context(() => {
+        const scrollDistance = (galleryData.length - 1) * window.innerHeight * 0.5;
+
+        ScrollTrigger.create({
+          trigger: containerRef.current,
+          start: "top top",
+          end: `+=${scrollDistance * 3}`,
+          pin: true,
+          animation: gsap.to(trackRef.current, {
+            y: -scrollDistance,
+            ease: "none"
+          }),
+          scrub: 1,
+          onUpdate: (self) => {
+            const index = Math.round(self.progress * (galleryData.length - 1));
+            setActiveIndex(index);
+          }
+        });
       });
-    });
 
-    return () => ctx.revert();
+      cleanup = () => ctx.revert();
+    })();
+
+    return () => { cancelled = true; if (cleanup) cleanup(); };
   }, []);
 
   return (
     <div style={{ position: 'relative', width: '100%' }}>
       <section className={styles.gallerySection} ref={containerRef} id="gallery">
-        {/* Structural Thin Lines */}
         <div className={styles.gridLines}>
           <div className={styles.lineH1}></div>
           <div className={styles.lineH2}></div>
@@ -74,26 +86,31 @@ const Gallery = () => {
           <div className={styles.lineV2}></div>
         </div>
 
-        {/* Left Column: Massive Static Editorial Typography */}
         <div className={styles.leftContent}>
           <h2 className={styles.massiveText}>FACILITY</h2>
         </div>
 
-        {/* Center Column: The Image Track */}
         <div className={styles.centerTrackWrapper}>
           <div className={styles.track} ref={trackRef}>
             {galleryData.map((item, index) => (
-              <div 
-                key={item.id} 
+              <div
+                key={item.id}
                 className={`${styles.imageContainer} ${activeIndex === index ? styles.active : styles.inactive}`}
               >
-                <img src={item.src} alt={item.title} />
+                <Image
+                  src={item.src}
+                  alt={item.title}
+                  fill
+                  sizes="(max-width: 768px) 90vw, 50vw"
+                  loading={index === 0 ? "eager" : "lazy"}
+                  quality={75}
+                  style={{ objectFit: "cover" }}
+                />
               </div>
             ))}
           </div>
         </div>
 
-        {/* Precise Crosshairs matching the grid intersection */}
         <div className={styles.crosshairs}>
           <div className={`${styles.crosshair} ${styles.tl}`}></div>
           <div className={`${styles.crosshair} ${styles.tr}`}></div>
@@ -101,14 +118,11 @@ const Gallery = () => {
           <div className={`${styles.crosshair} ${styles.br}`}></div>
         </div>
 
-        {/* Right Column: Navigation Counter and Labels */}
         <div className={styles.rightContent}>
-          
-          {/* Horizontal Counter List */}
           <div className={styles.counterContainer}>
             {galleryData.map((item, index) => (
-              <span 
-                key={`count-${index}`} 
+              <span
+                key={`count-${index}`}
                 className={`${styles.counterItem} ${activeIndex === index ? styles.active : ''}`}
               >
                 {index + 1}
@@ -116,18 +130,16 @@ const Gallery = () => {
             ))}
           </div>
 
-          {/* Vertical Labels List */}
           <div className={styles.labelsContainer}>
             {galleryData.map((item, index) => (
-              <span 
-                key={`label-${index}`} 
+              <span
+                key={`label-${index}`}
                 className={`${styles.labelItem} ${activeIndex === index ? styles.active : ''}`}
               >
                 {item.title}
               </span>
             ))}
           </div>
-
         </div>
 
       </section>
