@@ -143,33 +143,11 @@
 }
 
 @media (max-width: 768px) {
-  .section {
-    padding: 15vh 0 12vw;
-  }
   .title {
     font-size: 10vw;
   }
   .card {
     width: 80vw;
     min-width: unset;
-    padding: 2rem;
   }
-  .quote {
-    font-size: 1rem;
-  }
-}
-
-/* Pure-CSS marquee fallback used on mobile / reduced-motion paths */
-.cssMarquee {
-  animation: marqueeScroll 60s linear infinite;
-  will-change: transform;
-}
-
-@keyframes marqueeScroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .cssMarquee { animation: none; }
 }

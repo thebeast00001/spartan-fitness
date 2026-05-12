@@ -200,40 +200,6 @@
   .lineV1 { left: 5vw; }
   .lineV2 { right: 5vw; }
   .centerTrackWrapper, .crosshairs { left: 5vw; width: 90vw; }
-  .leftContent { display: none; }
-  .rightContent { display: none; }
-}
-
-/* Mobile: no GSAP pinning, render the gallery as a tidy vertical stack so
-   users actually see all four images on a phone. */
-@media (max-width: 768px) {
-  .gallerySection {
-    height: auto;
-    min-height: 100vh;
-    padding: 60px 0;
-  }
-  .gridLines, .crosshairs { display: none; }
-  .centerTrackWrapper {
-    position: relative;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: auto;
-    overflow: visible;
-  }
-  .track {
-    transform: none !important;
-    padding-top: 0;
-    padding-bottom: 0;
-    gap: 1rem;
-  }
-  .imageContainer {
-    height: 60vw;
-    padding: 0.5rem;
-    opacity: 1 !important;
-    transform: none !important;
-  }
-  .imageContainer img {
-    filter: grayscale(0%) contrast(1.05) !important;
-  }
+  .leftContent { display: none; } /* Hide massive text on mobile */
+  .rightContent { display: none; } /* Hide right column navigation on mobile for clean look */
 }

@@ -3,11 +3,13 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./Schedule.module.css";
+import CustomCursor from "@/components/CustomCursor";
 import SmoothScroll from "@/components/SmoothScroll";
+import Image from "next/image";
 import { Anton } from "next/font/google";
 import { useUser } from "@clerk/nextjs";
 
-const anton = Anton({ weight: "400", subsets: ["latin"], display: "swap" });
+const anton = Anton({ weight: "400", subsets: ["latin"] });
 
 interface WorkoutSession {
   id: string;
@@ -105,6 +107,8 @@ export default function SchedulePage() {
 
   return (
     <SmoothScroll>
+      <CustomCursor />
+      
       <div className={styles.container}>
         
         {/* MASSIVE TITLE AREA */}

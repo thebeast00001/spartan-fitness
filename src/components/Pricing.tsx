@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import styles from "./Pricing.module.css";
+import { Inter } from "next/font/google";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+
+const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
 const pricingData = [
   {
@@ -160,7 +163,7 @@ export default function Pricing() {
   };
 
   return (
-    <section className={styles.pricingSection} id="pricing" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+    <section className={`${styles.pricingSection} ${inter.className}`} id="pricing">
       <div className={styles.grid}>
         
         {/* Left Sidebar 3fr */}

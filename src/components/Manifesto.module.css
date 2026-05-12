@@ -139,42 +139,12 @@
     align-items: start;
     padding-top: 100px;
   }
-
+  
   .leftCol {
     padding-top: 0;
   }
-
+  
   .description {
     font-size: 1.5rem;
-  }
-}
-
-/* Mobile: ditch the pinned stack and render as a regular vertical scroll
-   so all three items are reachable without GSAP. */
-@media (max-width: 768px) {
-  .manifestoSection {
-    height: auto;
-    min-height: auto;
-    overflow: visible;
-  }
-  .stackContainer {
-    height: auto;
-  }
-  .stackItem {
-    position: relative !important;
-    transform: none !important;
-    height: auto;
-    padding: 60px 5%;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
-  }
-  .contentGrid {
-    height: auto;
-    padding-top: 0;
-  }
-  .title {
-    font-size: 2rem;
-  }
-  .description {
-    font-size: 1.1rem;
   }
 }

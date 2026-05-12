@@ -5,7 +5,10 @@ import styles from "./Nav.module.css";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { UserButton, useAuth } from "@clerk/nextjs";
+import { Inter } from "next/font/google";
+import { SignInButton, UserButton, useAuth } from "@clerk/nextjs";
+
+const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600"] });
 
 const NAV_LINKS = [
   { name: "JOIN THE CULT", href: "/#trial" },
@@ -147,7 +150,7 @@ export default function Nav() {
   };
 
   return (
-    <div className={`${styles.navWrapper} ${isOpen ? styles.open : ""}`} style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+    <div className={`${styles.navWrapper} ${isOpen ? styles.open : ""} ${inter.className}`}>
       
       {/* Floating Pill Trigger */}
       <div className={styles.pillContainer}>

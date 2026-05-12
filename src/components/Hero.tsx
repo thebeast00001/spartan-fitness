@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import styles from "./Hero.module.css";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -13,200 +17,186 @@ const Hero = () => {
   const scrollHintRef = useRef<HTMLDivElement>(null);
   const [isSoundOn, setIsSoundOn] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 768px), (pointer: coarse)");
-    setIsMobile(mq.matches);
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    // Slightly delay mount so the rest of the page can paint first
-    const timer = setTimeout(() => setMounted(true), reduceMotion ? 0 : 80);
+    const timer = setTimeout(() => setMounted(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
+  // Toggle sound on user click (browser requires gesture to unmute)
   const toggleSound = () => {
     const video = videoRef.current;
     if (!video) return;
     const next = !isSoundOn;
     video.muted = !next;
     setIsSoundOn(next);
-    if (next) video.play().catch(() => {});
+    // If enabling sound, ensure video is playing
+    if (next) video.play();
   };
 
   useEffect(() => {
-    if (!mounted) return;
-
+    // Force video to play muted on mount
     const video = videoRef.current;
     if (video) {
       video.muted = true;
-      const p = video.play();
-      if (p !== undefined) {
-        p.catch(() => {
-          const onInteract = () => {
-            video.play().catch(() => {});
-            document.removeEventListener("click", onInteract);
-            document.removeEventListener("touchstart", onInteract);
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          const playOnInteract = () => {
+            video.play();
+            document.removeEventListener("click", playOnInteract);
           };
-          document.addEventListener("click", onInteract, { once: true });
-          document.addEventListener("touchstart", onInteract, { once: true });
+          document.addEventListener("click", playOnInteract);
         });
       }
     }
 
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduceMotion) return;
+    const ctx = gsap.context(() => {
 
-    // Dynamically load GSAP only when we actually animate (skips ~70KB on
-    // reduced-motion / cold paint paths).
-    let cleanup: (() => void) | undefined;
-    let cancelled = false;
+      // ── 1. Staggered Entrance ─────────────────────────────────
+      const entrance = gsap.timeline({
+        defaults: { ease: "power4.out" },
+        delay: 0.3,
+      });
 
-    (async () => {
-      const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
-        import("gsap"),
-        import("gsap/ScrollTrigger"),
-      ]);
-      if (cancelled) return;
-      gsap.registerPlugin(ScrollTrigger);
+      // Chars reveal one by one with rotation
+      entrance.from(".char", {
+        y: "120%",
+        rotateX: -80,
+        opacity: 0,
+        stagger: 0.035,
+        duration: 1.4,
+      });
 
-      const ctx = gsap.context(() => {
-        // ── Staggered Entrance (runs on all viewports) ────────────
-        const entrance = gsap.timeline({
-          defaults: { ease: "power4.out" },
-          delay: 0.2,
-        });
+      // Video fades in after text starts
+      entrance.fromTo(
+        videoSectionRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 1.2, ease: "power2.inOut" },
+        "-=0.5"
+      );
 
-        entrance.from(".char", {
-          y: "120%",
-          rotateX: -80,
+      // Frame border fades in synced with video
+      entrance.fromTo(
+        videoFrameRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 1, ease: "power2.inOut" },
+        "-=1"
+      );
+
+      // Scroll hint fades in last
+      entrance.to(scrollHintRef.current, {
+        opacity: 1,
+        duration: 0.6,
+      }, "-=0.4");
+
+      // ── 2. Scroll-driven Unfold ──────────────────────────────
+      const scrollTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: pinnedRef.current,
+          start: "top top",
+          end: "+=280%",
+          scrub: 2.5,
+          pin: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          onLeave: () => {
+            // Auto-mute when scrolling past hero
+            if (videoRef.current) videoRef.current.muted = true;
+            setIsSoundOn(false);
+          },
+          onEnterBack: () => {
+            // Stay muted when returning — user can re-enable via button
+          },
+        },
+      });
+
+      // Clip-path: centred square → bounded frame
+      scrollTl.fromTo(
+        videoSectionRef.current,
+        { clipPath: "inset(35% 37% 35% 37%)" },
+        { clipPath: "inset(4% 3% 4% 3%)", ease: "power1.inOut", duration: 1 }
+      );
+
+      // Frame border synced with video clip
+      scrollTl.fromTo(
+        videoFrameRef.current,
+        { clipPath: "inset(35% 37% 35% 37%)" },
+        { clipPath: "inset(4% 3% 4% 3%)", ease: "power1.inOut", duration: 1 },
+        0
+      );
+
+      // Video zoom out as it expands
+      scrollTl.fromTo(
+        videoRef.current,
+        { scale: 1.6 },
+        { scale: 1, ease: "power1.inOut", duration: 1 },
+        0
+      );
+
+      // Text fades + shifts slightly upward
+      scrollTl.to(
+        ".char",
+        { opacity: 0, y: "-30px", stagger: 0.02, ease: "power2.in", duration: 0.6 },
+        0.1
+      );
+
+      // Scroll hint disappears first
+      scrollTl.to(
+        scrollHintRef.current,
+        { opacity: 0, y: -15, duration: 0.15, ease: "power2.in" },
+        0
+      );
+
+      // Corner markers fade in as video approaches final bounds
+      scrollTl.to(
+        ".corner-mark",
+        { opacity: 1, duration: 0.3, stagger: 0.05, ease: "power2.out" },
+        0.7
+      );
+
+      // ── THE UNDERGROUND DROP (Fixed & Refined) ──
+      // Clean, extremely fast gravity drop without buggy CSS filters
+      scrollTl.to(
+        containerRef.current,
+        {
+          y: "150vh",
+          scale: 0.5,
           opacity: 0,
-          stagger: 0.035,
-          duration: 1.2,
-        });
+          duration: 1.5,
+          ease: "power3.in"
+        },
+        1.2 // Starts right after video unfold completes
+      );
 
-        entrance.fromTo(
-          videoSectionRef.current,
-          { opacity: 0 },
-          { opacity: 1, duration: 1, ease: "power2.inOut" },
-          "-=0.5"
-        );
+    }, heroRef);
 
-        entrance.fromTo(
-          videoFrameRef.current,
-          { opacity: 0 },
-          { opacity: 1, duration: 0.8, ease: "power2.inOut" },
-          "-=1"
-        );
-
-        entrance.to(scrollHintRef.current, { opacity: 1, duration: 0.5 }, "-=0.4");
-
-        // ── Scroll-driven Unfold (desktop only — pinning kills mobile perf) ──
-        if (isMobile) {
-          // On mobile, just show the final state — no pinning, no heavy scrub.
-          gsap.set(videoSectionRef.current, { clipPath: "inset(4% 3% 4% 3%)" });
-          gsap.set(videoFrameRef.current, { clipPath: "inset(4% 3% 4% 3%)" });
-          gsap.set(videoRef.current, { scale: 1 });
-          gsap.set(".corner-mark", { opacity: 1 });
-          return;
-        }
-
-        const scrollTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: pinnedRef.current,
-            start: "top top",
-            end: "+=280%",
-            scrub: 2.5,
-            pin: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-            onLeave: () => {
-              if (videoRef.current) videoRef.current.muted = true;
-              setIsSoundOn(false);
-            },
-          },
-        });
-
-        scrollTl.fromTo(
-          videoSectionRef.current,
-          { clipPath: "inset(35% 37% 35% 37%)" },
-          { clipPath: "inset(4% 3% 4% 3%)", ease: "power1.inOut", duration: 1 }
-        );
-
-        scrollTl.fromTo(
-          videoFrameRef.current,
-          { clipPath: "inset(35% 37% 35% 37%)" },
-          { clipPath: "inset(4% 3% 4% 3%)", ease: "power1.inOut", duration: 1 },
-          0
-        );
-
-        scrollTl.fromTo(
-          videoRef.current,
-          { scale: 1.6 },
-          { scale: 1, ease: "power1.inOut", duration: 1 },
-          0
-        );
-
-        scrollTl.to(
-          ".char",
-          { opacity: 0, y: "-30px", stagger: 0.02, ease: "power2.in", duration: 0.6 },
-          0.1
-        );
-
-        scrollTl.to(
-          scrollHintRef.current,
-          { opacity: 0, y: -15, duration: 0.15, ease: "power2.in" },
-          0
-        );
-
-        scrollTl.to(
-          ".corner-mark",
-          { opacity: 1, duration: 0.3, stagger: 0.05, ease: "power2.out" },
-          0.7
-        );
-
-        scrollTl.to(
-          containerRef.current,
-          {
-            y: "150vh",
-            scale: 0.5,
-            opacity: 0,
-            duration: 1.5,
-            ease: "power3.in",
-          },
-          1.2
-        );
-      }, heroRef);
-
-      cleanup = () => ctx.revert();
-    })();
-
-    return () => {
-      cancelled = true;
-      if (cleanup) cleanup();
-    };
-  }, [mounted, isMobile]);
+    return () => ctx.revert();
+  }, []);
 
   const splitText = (text: string) =>
     text.split("").map((char, i) => (
       <span key={i} className="char" style={{ display: "inline-block" }}>
-        {char === " " ? " " : char}
+        {char === " " ? "\u00A0" : char}
       </span>
     ));
 
   return (
     <div ref={heroRef}>
       <div className={styles.hero} ref={pinnedRef}>
-
+        
+        {/* Subliminal Easter Egg (Revealed during the drop) */}
         <div className={styles.subliminalMessage}>
           <h2 className={styles.subliminalText}>Discipline.</h2>
         </div>
 
-        <div
-          className={styles.pinnedContainer}
-          ref={containerRef}
+        <div 
+          className={styles.pinnedContainer} 
+          ref={containerRef} 
           style={{ transformOrigin: "bottom center", zIndex: 2 }}
         >
 
+          {/* Video layer */}
           <div className={styles.videoSection} ref={videoSectionRef}>
             {mounted && (
               <video
@@ -215,7 +205,7 @@ const Hero = () => {
                 muted
                 loop
                 playsInline
-                preload={isMobile ? "metadata" : "auto"}
+                preload="auto"
                 poster="/hero_poster.jpg"
                 className={styles.heroVideo}
                 style={{ backgroundColor: '#111' }}
@@ -225,6 +215,7 @@ const Hero = () => {
             )}
           </div>
 
+          {/* Sound toggle button */}
           <button
             className={styles.soundToggle}
             onClick={toggleSound}
@@ -249,18 +240,22 @@ const Hero = () => {
             <span className={styles.soundLabel}>{isSoundOn ? "SOUND ON" : "SOUND OFF"}</span>
           </button>
 
+          {/* Thin border frame synced with video clip */}
           <div className={styles.videoFrame} ref={videoFrameRef} />
 
+          {/* Editorial corner markers */}
           <div className={`${styles.cornerMark} ${styles.topLeft} corner-mark`} />
           <div className={`${styles.cornerMark} ${styles.topRight} corner-mark`} />
           <div className={`${styles.cornerMark} ${styles.bottomLeft} corner-mark`} />
           <div className={`${styles.cornerMark} ${styles.bottomRight} corner-mark`} />
 
+          {/* Headline */}
           <div className={styles.titleContainer}>
             <div className={styles.line}>{splitText("SPARTAN")}</div>
             <div className={styles.line}>{splitText("CULTURE")}</div>
           </div>
 
+          {/* Scroll hint */}
           <div className={styles.scrollHint} ref={scrollHintRef}>
             <span className={styles.scrollHintText}>Scroll to explore</span>
             <div className={styles.scrollLine} />

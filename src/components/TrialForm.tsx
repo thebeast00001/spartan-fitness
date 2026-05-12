@@ -2,41 +2,35 @@
 
 import { useEffect, useRef, MouseEvent, ReactNode, useState } from "react";
 import styles from "./TrialForm.module.css";
-import { useUser } from "@clerk/nextjs";
-import { submitTrialAction } from "@/app/actions";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-type GsapModule = typeof import("gsap").default;
-let gsapPromise: Promise<GsapModule> | null = null;
-const getGsap = () => {
-  if (!gsapPromise) {
-    gsapPromise = import("gsap").then((m) => m.default);
-  }
-  return gsapPromise;
-};
+gsap.registerPlugin(ScrollTrigger);
+
+import { useUser } from "@clerk/nextjs";
+
+import { submitTrialAction } from "@/app/actions";
 
 const MagneticButton = ({ children, className, type = "button", form, disabled }: { children: ReactNode, className?: string, type?: "button" | "submit" | "reset", form?: string, disabled?: boolean }) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const handleMouseMove = async (e: MouseEvent<HTMLButtonElement>) => {
+  const handleMouseMove = (e: MouseEvent<HTMLButtonElement>) => {
     if (!buttonRef.current || disabled) return;
-    if (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) return;
     const { clientX, clientY } = e;
     const { left, top, width, height } = buttonRef.current.getBoundingClientRect();
     const x = clientX - (left + width / 2);
     const y = clientY - (top + height / 2);
-    const gsap = await getGsap();
+    
     gsap.to(buttonRef.current, { x: x * 0.4, y: y * 0.4, duration: 1, ease: "power3.out" });
   };
 
-  const handleMouseLeave = async () => {
+  const handleMouseLeave = () => {
     if (!buttonRef.current || disabled) return;
-    if (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) return;
-    const gsap = await getGsap();
     gsap.to(buttonRef.current, { x: 0, y: 0, duration: 1, ease: "elastic.out(1, 0.3)" });
   };
 
   return (
-    <button
+    <button 
       ref={buttonRef}
       className={`${styles.magneticBtn} ${className || ''}`}
       onMouseMove={handleMouseMove}
@@ -77,75 +71,73 @@ const TrialForm = () => {
   };
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduceMotion) return;
+    const ctx = gsap.context(() => {
+      // Elegant stagger reveal
+      gsap.from(`.${styles.reveal}`, {
+        y: 40,
+        opacity: 0,
+        duration: 1.2,
+        stagger: 0.1,
+        ease: "power4.out",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 75%"
+        }
+      });
 
-    let cancelled = false;
-    let cleanup: (() => void) | undefined;
+      // Animated Hashtag Stagger
+      gsap.from(`.${styles.hashChar}`, {
+        opacity: 0,
+        y: 20,
+        stagger: 0.05,
+        duration: 0.8,
+        ease: "back.out(1.7)",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 75%"
+        }
+      });
 
-    (async () => {
-      const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
-        import("gsap"),
-        import("gsap/ScrollTrigger"),
-      ]);
-      if (cancelled) return;
-      gsap.registerPlugin(ScrollTrigger);
-
-      const ctx = gsap.context(() => {
-        gsap.from(`.${styles.reveal}`, {
-          y: 40,
-          opacity: 0,
-          duration: 1.2,
-          stagger: 0.1,
-          ease: "power4.out",
-          scrollTrigger: { trigger: containerRef.current, start: "top 75%" }
-        });
-
-        gsap.from(`.${styles.hashChar}`, {
-          opacity: 0,
-          y: 20,
-          stagger: 0.05,
-          duration: 0.8,
-          ease: "back.out(1.7)",
-          scrollTrigger: { trigger: containerRef.current, start: "top 75%" }
-        });
-
-        gsap.from(`.${styles.helperWord}`, {
-          y: "120%",
-          stagger: 0.03,
-          duration: 0.6,
+      // Word-by-word reveal for the helper text
+      gsap.from(`.${styles.helperWord}`, {
+        y: "120%",
+        stagger: 0.03,
+        duration: 0.6,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 75%"
+        }
+      });
+      
+      // Draw the hand-drawn line
+      gsap.fromTo(`.${styles.drawnLine} path`, 
+        { strokeDasharray: 150, strokeDashoffset: 150 },
+        { 
+          strokeDashoffset: 0, 
+          duration: 1.5, 
           ease: "power3.out",
-          scrollTrigger: { trigger: containerRef.current, start: "top 75%" }
-        });
-
-        gsap.fromTo(`.${styles.drawnLine} path`,
-          { strokeDasharray: 150, strokeDashoffset: 150 },
-          {
-            strokeDashoffset: 0,
-            duration: 1.5,
-            ease: "power3.out",
-            delay: 0.5,
-            scrollTrigger: { trigger: containerRef.current, start: "top 75%" }
-          }
-        );
-
-        gsap.to(`.${styles.architecturalLine}`, {
-          y: 200,
-          ease: "none",
+          delay: 0.5,
           scrollTrigger: {
             trigger: containerRef.current,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true
+            start: "top 75%"
           }
-        });
-      }, containerRef);
+        }
+      );
 
-      cleanup = () => ctx.revert();
-    })();
-
-    return () => { cancelled = true; if (cleanup) cleanup(); };
+      // Parallax the architectural line slightly
+      gsap.to(`.${styles.architecturalLine}`, {
+        y: 200,
+        ease: "none",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true
+        }
+      });
+    }, containerRef);
+    return () => ctx.revert();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -164,30 +156,33 @@ const TrialForm = () => {
 
       setIsSubmitted(true);
 
-      const gsap = await getGsap();
       const tl = gsap.timeline();
 
+      // 1. Reveal jagged edge and convert receipt into a physical object
       tl.to(jaggedRef.current, { opacity: 1, duration: 0.1 })
         .to(receiptRef.current, {
           boxShadow: "0 40px 100px rgba(0,0,0,0.15), 0 10px 40px rgba(0,0,0,0.1)",
-          y: -15,
-          rotationZ: 1,
+          y: -15, // Slight tension lift
+          rotationZ: 1, // Slight twist before tearing
           duration: 0.4,
           ease: "power2.out"
         })
+        // Fade out the left column instructions
         .to(leftContentRef.current, { opacity: 0, duration: 0.4 }, "<")
-
+        
+        // 2. The Physical Gravity Drop
         .to(receiptRef.current, {
           y: "150vh",
-          rotationZ: -8,
+          rotationZ: -8, // Tumbles as it falls
           duration: 1.5,
           ease: "power3.in"
         }, "+=0.2")
 
-        .fromTo(successRef.current,
+        // 3. Reveal the massive Success State underneath
+        .fromTo(successRef.current, 
           { opacity: 0, y: 50, scale: 0.95 },
           { opacity: 1, y: 0, scale: 1, duration: 1, ease: "power3.out" },
-          "-=0.8"
+          "-=0.8" // Start revealing while receipt is still falling
         );
     } catch (err) {
       console.error(err);
